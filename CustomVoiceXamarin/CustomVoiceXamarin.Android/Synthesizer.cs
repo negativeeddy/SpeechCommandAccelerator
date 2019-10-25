@@ -1,21 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Android.App;
-using Android.Content;
 using Android.Media;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using CustomVoiceXamarin.Speech;
 using Java.IO;
-using Java.Util.Concurrent.Atomic;
 using Microsoft.CognitiveServices.Speech.Audio;
 using MediaEncoding = Android.Media.Encoding;
 
@@ -23,15 +11,15 @@ using MediaEncoding = Android.Media.Encoding;
 
 namespace CustomVoiceXamarin.Droid
 {
-    public class Synthesizer : ISynthesizer
+    public sealed class Synthesizer : ISynthesizer
     {
-        private const string logTag = "Synthesizer";
+        private const string LOG_TAG = "Synthesizer";
         private const int SAMPLE_RATE = 16000;
         private const MediaEncoding ENCODING = MediaEncoding.Pcm16bit;
         private const ChannelOut CHANNEL_CONFIG = ChannelOut.Mono;
 
-        private readonly ConcurrentQueue<PullAudioOutputStream> streamList;
-        
+        private readonly ConcurrentQueue<PullAudioOutputStream> _streamList = new ConcurrentQueue<PullAudioOutputStream>();
+
         private int _playBufSize;
         private string _audioFileDirectory = "audioFiles";
         private string _audioFileName = "audioResponse";
@@ -40,26 +28,22 @@ namespace CustomVoiceXamarin.Droid
 
         public Synthesizer()
         {
-            this.streamList = new ConcurrentQueue<PullAudioOutputStream>();
         }
 
         public void PlayStream(PullAudioOutputStream stream)
         {
-            streamList.Enqueue(stream);
+            _streamList.Enqueue(stream);
 
-            if (!_isPlaying)
-            {
-                startPlaying();
-            }
+            EnsureIsPlaying();
         }
 
-        private object startPlayingLock = new object();
+        private object _startPlayingLock = new object();
 
         // TODO: switch to BlockingCollection<T> for producer/consumer pattern
-        private void startPlaying()
+        private void EnsureIsPlaying()
         {
             // prevent reentry
-            lock (startPlayingLock)
+            lock (_startPlayingLock)
             {
                 if (_isPlaying)
                 {
@@ -82,19 +66,19 @@ namespace CustomVoiceXamarin.Droid
                     .SetSampleRate(SAMPLE_RATE)
                     .Build();
 
-           var audioTrack = new AudioTrack(attrs, fmt, _playBufSize, AudioTrackMode.Stream, 0);
+            var audioTrack = new AudioTrack(attrs, fmt, _playBufSize, AudioTrackMode.Stream, 0);
 
 
             Task.Run(async () =>
             {
 
-                using (FileOutputStream fos = getFileOutputStream())
+                using (FileOutputStream fileStream = getFileOutputStream())
                 {
                     byte[] buffer = new byte[_playBufSize];
                     audioTrack.Play();
                     long readSize = -1;
 
-                    while (streamList.TryDequeue(out PullAudioOutputStream stream))
+                    while (_streamList.TryDequeue(out PullAudioOutputStream stream))
                     {
                         try
                         {
@@ -102,9 +86,9 @@ namespace CustomVoiceXamarin.Droid
                             {
                                 readSize = stream.Read(buffer);
                                 await audioTrack.WriteAsync(buffer, 0, (int)readSize);
-                                if (fos != null)
+                                if (fileStream != null)
                                 {
-                                    await fos.WriteAsync(buffer);
+                                    await fileStream.WriteAsync(buffer);
                                 }
                             }
 
@@ -112,7 +96,7 @@ namespace CustomVoiceXamarin.Droid
                         }
                         catch (Exception e)
                         {
-                            System.Diagnostics.Trace.WriteLine(e.ToString(), logTag);
+                            System.Diagnostics.Trace.WriteLine(e.ToString(), LOG_TAG);
                             break;
                         }
                         //audioTrack.write(buffer, 0, readSize);
@@ -124,14 +108,14 @@ namespace CustomVoiceXamarin.Droid
 
                     try
                     {
-                        if (fos != null)
+                        if (fileStream != null)
                         {
-                            fos.Close();
+                            fileStream.Close();
                         }
                     }
                     catch (Exception e)
                     {
-                        System.Diagnostics.Trace.WriteLine(e);
+                        System.Diagnostics.Trace.WriteLine(e, LOG_TAG);
                     }
                     // trigger event that playback is stopped
                     //EventBus.getDefault().post(new SynthesizerStopped());
@@ -161,7 +145,7 @@ namespace CustomVoiceXamarin.Droid
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine(ex);
+                System.Diagnostics.Trace.WriteLine(ex, LOG_TAG);
             }
             return null;
         }
