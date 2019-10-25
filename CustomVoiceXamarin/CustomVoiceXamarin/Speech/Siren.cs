@@ -26,16 +26,16 @@ namespace CustomVoiceXamarin.Speech
         private string szResultsText;
         private string logfile;
 
-        private ISynthesizer synthesizer;
+        private ISynthesizer _synthesizer;
 
         public bool IsSirenStarted { get; private set; }
         public bool UseKeyWord { get; set; }
 
-        private DialogServiceConnector botConnector = null;
+        private DialogServiceConnector _dialogService = null;
 
         public Siren()
         {
-            synthesizer = DependencyService.Get<ISynthesizer>();
+            _synthesizer = DependencyService.Get<ISynthesizer>();
         }
 
         public async Task Start()
@@ -54,12 +54,12 @@ namespace CustomVoiceXamarin.Speech
                 if (UseKeyWord)
                 {
                     var model = KeywordRecognitionModel.FromFile(KeywordModel);   // TODO: will this work?
-                    await botConnector.StartKeywordRecognitionAsync(model);
+                    await _dialogService.StartKeywordRecognitionAsync(model);
                 }
                 else
                 {
                     Trace.WriteLine("Starting inside else...");
-                    await botConnector.ListenOnceAsync();
+                    await _dialogService.ListenOnceAsync();
                     // Start listening.
                     RecognizedText = "listen ...";
                 }
@@ -77,49 +77,48 @@ namespace CustomVoiceXamarin.Speech
             {
                 RecognizedText = "Connecting to Bot";
 
+                DialogServiceConfig dlgSvcConfig = DialogServiceConfig.FromBotSecret(BotSecret, SpeechSubscriptionKey, SpeechRegion);
 
-                DialogServiceConfig botConnectorConfig = DialogServiceConfig.FromBotSecret(BotSecret, SpeechSubscriptionKey, SpeechRegion);
-
-                if (botConnectorConfig == null)
+                if (dlgSvcConfig == null)
                 {
                     Trace.WriteLine("BotConnectorConfig should not be null");
                 }
 
-                botConnectorConfig.SetProperty("DeviceGeometry", DeviceGeometry);
-                botConnectorConfig.SetProperty("SelectedGeometry", SelectedGeometry);
-                botConnectorConfig.SpeechRecognitionLanguage = LanguageRecognition;
+                dlgSvcConfig.SetProperty("DeviceGeometry", DeviceGeometry);
+                dlgSvcConfig.SetProperty("SelectedGeometry", SelectedGeometry);
+                dlgSvcConfig.SpeechRecognitionLanguage = LanguageRecognition;
                 //botConnectorConfig.setProperty("SPEECH-LogFilename", logfile);
 
 
                 AudioConfig audioConfig = AudioConfig.FromDefaultMicrophoneInput(); //run from the microphone
 
-                botConnector = new DialogServiceConnector(botConnectorConfig, audioConfig);
+                _dialogService = new DialogServiceConnector(dlgSvcConfig, audioConfig);
                 Trace.WriteLine("SpeechBotConnector created...");
 
                 // Configure all event listeners
-                RegisterEventListeners(botConnector);
+                RegisterEventListeners(_dialogService);
 
                 // Connect to the bot
-                botConnector.ConnectAsync();
+                _dialogService.ConnectAsync();
                 Trace.WriteLine("SpeechBotConnector is successfully connected");
 
             }
             catch (Exception ex)
             {
                 Trace.WriteLine("Exception thrown when connecting to SpeechBotConnector" + ex.ToString());
-                botConnector.DisconnectAsync();             // disconnect bot.
+                _dialogService.DisconnectAsync();             // disconnect bot.
             }
         }
 
-        private void RegisterEventListeners(DialogServiceConnector botConnector)
+        private void RegisterEventListeners(DialogServiceConnector dlgSvcConnector)
         {
             // SessionStarted will notify when audio begins flowing to the service for a
             // turn
-            botConnector.Recognizing += (o, e) => RecognizedText = e.Result.Text;
+            dlgSvcConnector.Recognizing += (o, e) => RecognizedText = e.Result.Text;
 
             // SessionStopped will notify when a turn is complete and it's safe to begin
             // listening again
-            botConnector.Recognized += (o, e) =>
+            dlgSvcConnector.Recognized += (o, e) =>
             {
                 if (e.Result.Reason == ResultReason.RecognizedKeyword)
                 {
@@ -133,26 +132,26 @@ namespace CustomVoiceXamarin.Speech
 
             // SessionStarted will notify when audio begins flowing to the service for a
             // turn
-            botConnector.SessionStarted += (s, e) => Trace.WriteLine($"Session started event id: {e.SessionId}");
+            dlgSvcConnector.SessionStarted += (s, e) => Trace.WriteLine($"Session started event id: {e.SessionId}");
 
             // SessionStopped will notify when a turn is complete and it's safe to begin
             // listening again
-            botConnector.SessionStopped += (s, e) => Trace.WriteLine($"Session stopped event id: {e.SessionId}");
+            dlgSvcConnector.SessionStopped += (s, e) => Trace.WriteLine($"Session stopped event id: {e.SessionId}");
 
             // Canceled will be signaled when a turn is aborted or experiences an error
             // condition
-            botConnector.Canceled += (s, e) => Trace.WriteLine($"Cancelled event details: {e.ErrorDetails}");
+            dlgSvcConnector.Canceled += (s, e) => Trace.WriteLine($"Cancelled event details: {e.ErrorDetails}");
 
             // ActivityReceived is the main way your bot will communicate with the client
             // and uses bot framework activities
-            botConnector.ActivityReceived += (s, activityEventArgs) =>
+            dlgSvcConnector.ActivityReceived += (s, activityEventArgs) =>
             {
                 string act = activityEventArgs.Activity;
 
                 if (activityEventArgs.HasAudio)
                 {
                     Trace.WriteLine("Audio Found");
-                    synthesizer.PlayStream(activityEventArgs.Audio);
+                    _synthesizer.PlayStream(activityEventArgs.Audio);
                 }
 
                 try
@@ -180,7 +179,7 @@ namespace CustomVoiceXamarin.Speech
             {
                 _recognizedText = " " + value;
                 Trace.WriteLine(_recognizedText);
-                RecognitionUpdate?.Invoke(this, new EventArgs());
+                RecognitionUpdate?.Invoke(this, new SirenEventArgs() { Text = value });
             }
             get => _recognizedText;
         }
@@ -193,14 +192,18 @@ namespace CustomVoiceXamarin.Speech
             {
                 _resultsText = value;
                 Trace.WriteLine(_resultsText);
-                ResponseUpdated?.Invoke(this, new EventArgs());
+                ResponseUpdated?.Invoke(this, new SirenEventArgs() { Text = value });
             }
             get => _recognizedText;
         }
 
-        public event EventHandler RecognitionUpdate;
-        public event EventHandler ResponseUpdated;
-        public event EventHandler RecognizedUpdate;
+        public event EventHandler<SirenEventArgs> RecognitionUpdate;
+        public event EventHandler<SirenEventArgs> ResponseUpdated;
+        public event EventHandler<SirenEventArgs> RecognizedUpdate;
 
+        public class SirenEventArgs : EventArgs
+        {
+            public string Text { get; set; }
+        }
     }
 }

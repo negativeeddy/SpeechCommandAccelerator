@@ -9,13 +9,35 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using static CustomVoiceXamarin.Speech.Siren;
 
 namespace CustomVoiceXamarin
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class WWChataView : ContentPage
     {
-        private Siren siren = null;
+        private Siren _siren = null;
+        private ObservableCollection<Message> _messages = new ObservableCollection<Message>();
+        //{
+        //    new Message {
+        //        Text = "test",
+        //        BelongsToCurrentUser = true,
+        //        MemberData = new MemberData
+        //        {
+        //            Name="Bob",
+        //            Color  = Color.Red,
+        //        },
+        //    },
+        //    new Message {
+        //        Text = "test",
+        //        BelongsToCurrentUser = false,
+        //        MemberData = new MemberData
+        //        {
+        //            Name="Sue",
+        //            Color  = Color.Green,
+        //        },
+        //    },
+        //};
 
         public WWChataView()
         {
@@ -24,53 +46,23 @@ namespace CustomVoiceXamarin
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            messages.ItemsSource = _messages;
+            messagesView.ItemsSource = _messages;
 
             await InitSiren();
         }
 
         private async Task InitSiren()
         {
-            siren = new Siren();
-            siren.RecognitionUpdate += Siren_RecognitionUpdate;
-            siren.ResponseUpdated += Siren_ResponseUpdated;
-            siren.RecognizedUpdate += Siren_RecognizedUpdate;
+            _siren = new Siren();
+            _siren.RecognitionUpdate += (s, e) => setText(e.Text);
+            _siren.ResponseUpdated += (s, e) => AddBotText(e.Text);
+            _siren.RecognizedUpdate += (s, e) => AddUserText(e.Text);
 
-            siren.Initialize(); // initialize the speech channel bot connection
-            siren.UseKeyWord = true;
 
-            await siren.Start();
-        }
+            _siren.Initialize(); // initialize the speech channel bot connection
+            _siren.UseKeyWord = true;
 
-        private void Siren_RecognizedUpdate(object sender, EventArgs e)
-        {
-            userSays(siren.RecognizedText);
-        }
-
-        private void Siren_ResponseUpdated(object sender, EventArgs e)
-        {
-            sirenSays(siren.ResultsText);
-        }
-
-        private void Siren_RecognitionUpdate(object sender, EventArgs e)
-        {
-            setText(siren.RecognizedText);
-        }
-
-        private void sirenSays(string resultsText)
-        {
-            var message = new Message
-            {
-                BelongsToCurrentUser = false,
-                Text = resultsText,
-                MemberData = new MemberData()
-                {
-                    Name = "Kira",
-                    Color = "blue",
-                },
-            };
-
-            _messages.Add(message);
+            await _siren.Start();
         }
 
         private void setText(string recognizedText)
@@ -78,18 +70,32 @@ namespace CustomVoiceXamarin
             statusText.Text = recognizedText;
         }
 
-        ObservableCollection<Message> _messages = new ObservableCollection<Message>();
+        private void AddBotText(string text)
+        {
+            var message = new Message
+            {
+                BelongsToCurrentUser = false,
+                Text = text,
+                MemberData = new MemberData()
+                {
+                    Name = "Kira",
+                    Color = Color.Blue,
+                },
+            };
 
-        private void userSays(string recognizedText)
+            _messages.Add(message);
+        }
+
+        private void AddUserText(string text)
         {
             var message = new Message
             {
                 BelongsToCurrentUser = true,
-                Text = recognizedText,
+                Text = text,
                 MemberData = new MemberData()
                 {
                     Name = "User",
-                    Color = "green",
+                    Color = Color.Green,
                 },
             };
 
