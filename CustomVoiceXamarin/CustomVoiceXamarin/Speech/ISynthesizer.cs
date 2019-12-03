@@ -9,5 +9,4 @@ namespace CustomVoiceXamarin.Speech
     {
         void PlayStream(PullAudioOutputStream stream);
     }
-
 }
