@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace CustomVoiceXamarin.Speech
@@ -16,15 +17,12 @@ namespace CustomVoiceXamarin.Speech
         private string SpeechApplicationId = "d451ecd4-798e-41da-bad4-94e73fa15d67";
         private string SpeechSubscriptionKey = "b5a192fa686c46ba9ba16d5b1553769f";
         private string SpeechRegion = "westus2";
+        private string KeywordModel = @"C:\src\CustomVoiceXamarin\CustomVoiceXamarin\CustomVoiceXamarin.UWP\bin\x86\Debug\AppX\voice\Hey_Kira.zip";
+
         private string Keyword = "";
-        private string KeywordModel = "Hey_Kira.zip";
-        private string DeviceGeometry = "";
-        private string SelectedGeometry = "";
         private string LanguageRecognition = "en-us";
 
         private string _recognizedText;
-        private string szResultsText;
-        private string logfile;
 
         private ISynthesizer _synthesizer;
 
@@ -40,7 +38,7 @@ namespace CustomVoiceXamarin.Speech
 
         public async Task StartAsync()
         {
-            Trace.WriteLine("Start Called...");
+            Trace.WriteLine("Starting Siren...");
 
             if (IsSirenStarted)
             {
@@ -58,12 +56,11 @@ namespace CustomVoiceXamarin.Speech
                 }
                 else
                 {
-                    Trace.WriteLine("Starting inside else...");
+                    Trace.WriteLine("Starting listen once session.");
                     await _dialogService.ListenOnceAsync();
                     // Start listening.
-                    RecognizedText = "listen ...";
+                    RecognizedText = "listening once ...";
                 }
-
             }
             catch (Exception e)
             {
@@ -77,25 +74,14 @@ namespace CustomVoiceXamarin.Speech
             {
                 await _synthesizer.InitializeAsync();
 
-                RecognizedText = "Connecting to Bot";
+                RecognizedText = "Connecting to assistant";
 
                 CustomCommandsConfig dlgSvcConfig = CustomCommandsConfig.FromSubscription(SpeechApplicationId, SpeechSubscriptionKey, SpeechRegion);
-
-                if (dlgSvcConfig == null)
-                {
-                    Trace.WriteLine("BotConnectorConfig should not be null");
-                }
-
-                //dlgSvcConfig.SetProperty("DeviceGeometry", DeviceGeometry);
-                //dlgSvcConfig.SetProperty("SelectedGeometry", SelectedGeometry);
                 dlgSvcConfig.Language = LanguageRecognition;
-                //botConnectorConfig.setProperty("SPEECH-LogFilename", logfile);
-
 
                 AudioConfig audioConfig = AudioConfig.FromDefaultMicrophoneInput(); //run from the microphone
 
                 _dialogService = new DialogServiceConnector(dlgSvcConfig, audioConfig);
-                Trace.WriteLine("SpeechBotConnector created...");
 
                 // Configure all event listeners
                 RegisterEventListeners(_dialogService);
@@ -124,7 +110,7 @@ namespace CustomVoiceXamarin.Speech
             {
                 if (e.Result.Reason == ResultReason.RecognizedKeyword)
                 {
-                    RecognizedText = "listen...";
+                    RecognizedText = "listening...";
                 }
                 else
                 {
