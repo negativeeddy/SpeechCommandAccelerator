@@ -2,20 +2,14 @@
 using Microsoft.CognitiveServices.Speech.Audio;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Media;
 using Windows.Media.Audio;
-using Windows.Media.Core;
 using Windows.Media.MediaProperties;
-using Windows.Media.Playback;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(CustomVoiceXamarin.UWP.Synthesizer))]
@@ -28,39 +22,12 @@ namespace CustomVoiceXamarin.UWP
         private AudioFrameInputNode _frameInputNode;
         private PullAudioOutputStream _audioStream;
 
-        private const string LOG_TAG = "Synthesizer";
-        private const int SAMPLE_RATE = 16000;
-        private const string AudioFileDirectory = "audioFiles";
-        private const string AudioFileName = "audioResponse";
-        private const string AudioFileExtension = "wav";
-        private const string ContentType = "audio/x-wav";
-
-        //private const MediaEncoding ENCODING = MediaEncoding.Pcm16bit;
-        //private const ChannelOut CHANNEL_CONFIG = ChannelOut.Mono;
-
         private readonly ConcurrentQueue<PullAudioOutputStream> _streamList = new ConcurrentQueue<PullAudioOutputStream>();
 
         private bool _isPlaying = false;
 
         public Synthesizer()
         {
-            _player.MediaFailed += (s,e) => Trace.WriteLine($"MediaPlayer failed: {e.Error} : {e.ErrorMessage}"); 
-            _player.CurrentStateChanged += (s,_) => Trace.WriteLine($"MediaPlayer state changed: {_player.PlaybackSession.PlaybackState}"); 
-            _player.MediaOpened += (s,_) => Trace.WriteLine($"MediaPlayer media opened: {_player.PlaybackSession.PlaybackState}");
-            _player.MediaEnded += (s,_) => Trace.WriteLine($"MediaPlayer media ended: {_player.PlaybackSession.PlaybackState}");
-            _player.AudioCategory = MediaPlayerAudioCategory.Speech;
-
-            var profile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.Auto);
-        }
-
-        private void _player_CurrentStateChanged(MediaPlayer sender, object args)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void _player_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
-        {
-            Trace.WriteLine($"MediaFailed: {args.Error} : {args.ErrorMessage}");
         }
 
         public async Task InitializeAsync()
@@ -183,7 +150,6 @@ namespace CustomVoiceXamarin.UWP
         }
 
         private object _startPlayingLock = new object();
-                MediaPlayer _player = new MediaPlayer();
 
         // TODO: switch to BlockingCollection<T> for producer/consumer pattern
         private void EnsureIsPlaying()
@@ -211,34 +177,6 @@ namespace CustomVoiceXamarin.UWP
                     {
                         _audioStream = stream;
                         _frameInputNode.Start();
-
-                        //try
-                        //{
-                        //    // read the SDK stream into memory
-                        //    MemoryStream memStream = new MemoryStream();
-                        //    long readSize = -1;
-                        //    while (readSize != 0)
-                        //    {
-                        //        readSize = stream.Read(buffer);
-                        //        await memStream.WriteAsync(buffer, 0, (int)readSize);
-                        //    }
-
-                        //    memStream.Seek(0, SeekOrigin.Begin);
-                        //    await SaveToFile(memStream);
-                        //    memStream.Seek(0, SeekOrigin.Begin);
-
-                        //    // play the stream
-                        //    var mediaSource = MediaSource.CreateFromStream(memStream.AsRandomAccessStream(), ContentType);
-                        //    _player.Source = mediaSource;
-                        //    _player.Play();
-
-                        //}
-                        //catch (Exception e)
-                        //{
-                        //    System.Diagnostics.Trace.WriteLine(e.ToString(), LOG_TAG);
-                        //    break;
-                        //}
-                        //audioTrack.write(buffer, 0, readSize);
                     }
 
                     //audioTrack.Stop();
@@ -249,28 +187,6 @@ namespace CustomVoiceXamarin.UWP
                     //EventBus.getDefault().post(new SynthesizerStopped());
                 }
             });
-        }
-
-        private async Task SaveToFile(MemoryStream memStream)
-        {
-            try
-            {
-                StorageFolder localFolder = ApplicationData.Current.TemporaryFolder;
-                StorageFile file = await localFolder.CreateFileAsync($"{AudioFileName}.{DateTime.Now.Ticks}.{AudioFileExtension}", CreationCollisionOption.OpenIfExists);
-                Trace.WriteLine($"Created file {file.Path}");
-                using (var fileStream = await file.OpenStreamForWriteAsync())
-                {
-                        await memStream.CopyToAsync(fileStream);
-                        await fileStream.FlushAsync();
-                        fileStream.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                // dont let failure to save to disk cause any other issues
-                System.Diagnostics.Trace.WriteLine(e, LOG_TAG);
-            }
-
         }
     }
 }
