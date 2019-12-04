@@ -59,10 +59,10 @@ namespace CustomVoiceXamarin
             _siren.RecognizedUpdate += (s, e) => AddUserText(e.Text);
 
 
-            _siren.Initialize(); // initialize the speech channel bot connection
+            await _siren.InitializeAsync(); // initialize the speech channel bot connection
             _siren.UseKeyWord = true;
 
-            await _siren.Start();
+            await _siren.StartAsync();
         }
 
         private void setText(string recognizedText)

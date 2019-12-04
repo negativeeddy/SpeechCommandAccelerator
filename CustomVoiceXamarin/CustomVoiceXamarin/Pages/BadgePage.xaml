@@ -7,9 +7,12 @@
              x:Class="CustomVoiceXamarin.BadgePage">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Badge page!"
+            <Label x:Name="statusText" Text="Badge page!!"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
+            <Button x:Name="bttnStartListening" Text="Speak" Clicked="bttnStartListening_Clicked"></Button>
+            <CollectionView x:Name="messagesView" ItemTemplate="{StaticResource chatTemplate}">
+            </CollectionView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -149,5 +149,11 @@ namespace CustomVoiceXamarin.Droid
             }
             return null;
         }
+
+        public Task InitializeAsync()
+        {
+            // nothing to do here
+            return Task.CompletedTask;
+        }
     }
 }

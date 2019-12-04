@@ -13,14 +13,14 @@ namespace CustomVoiceXamarin.Speech
 {
     class Siren
     {
-        private string SpeechSubscriptionKey = "";
-        private string SpeechRegion = "";
+        private string SpeechApplicationId = "d451ecd4-798e-41da-bad4-94e73fa15d67";
+        private string SpeechSubscriptionKey = "b5a192fa686c46ba9ba16d5b1553769f";
+        private string SpeechRegion = "westus2";
         private string Keyword = "";
         private string KeywordModel = "Hey_Kira.zip";
         private string DeviceGeometry = "";
         private string SelectedGeometry = "";
-        private string LanguageRecognition = "";
-        private string BotSecret = "";
+        private string LanguageRecognition = "en-us";
 
         private string _recognizedText;
         private string szResultsText;
@@ -38,7 +38,7 @@ namespace CustomVoiceXamarin.Speech
             _synthesizer = DependencyService.Get<ISynthesizer>();
         }
 
-        public async Task Start()
+        public async Task StartAsync()
         {
             Trace.WriteLine("Start Called...");
 
@@ -71,22 +71,24 @@ namespace CustomVoiceXamarin.Speech
             }
         }
 
-        public void Initialize()
+        public async Task InitializeAsync()
         {
             try
             {
+                await _synthesizer.InitializeAsync();
+
                 RecognizedText = "Connecting to Bot";
 
-                DialogServiceConfig dlgSvcConfig = DialogServiceConfig.FromBotSecret(BotSecret, SpeechSubscriptionKey, SpeechRegion);
+                CustomCommandsConfig dlgSvcConfig = CustomCommandsConfig.FromSubscription(SpeechApplicationId, SpeechSubscriptionKey, SpeechRegion);
 
                 if (dlgSvcConfig == null)
                 {
                     Trace.WriteLine("BotConnectorConfig should not be null");
                 }
 
-                dlgSvcConfig.SetProperty("DeviceGeometry", DeviceGeometry);
-                dlgSvcConfig.SetProperty("SelectedGeometry", SelectedGeometry);
-                dlgSvcConfig.SpeechRecognitionLanguage = LanguageRecognition;
+                //dlgSvcConfig.SetProperty("DeviceGeometry", DeviceGeometry);
+                //dlgSvcConfig.SetProperty("SelectedGeometry", SelectedGeometry);
+                dlgSvcConfig.Language = LanguageRecognition;
                 //botConnectorConfig.setProperty("SPEECH-LogFilename", logfile);
 
 
@@ -99,14 +101,14 @@ namespace CustomVoiceXamarin.Speech
                 RegisterEventListeners(_dialogService);
 
                 // Connect to the bot
-                _dialogService.ConnectAsync();
+                await _dialogService.ConnectAsync();
                 Trace.WriteLine("SpeechBotConnector is successfully connected");
 
             }
             catch (Exception ex)
             {
                 Trace.WriteLine("Exception thrown when connecting to SpeechBotConnector" + ex.ToString());
-                _dialogService.DisconnectAsync();             // disconnect bot.
+                await _dialogService.DisconnectAsync();             // disconnect bot.
             }
         }
 
@@ -136,11 +138,19 @@ namespace CustomVoiceXamarin.Speech
 
             // SessionStopped will notify when a turn is complete and it's safe to begin
             // listening again
-            dlgSvcConnector.SessionStopped += (s, e) => Trace.WriteLine($"Session stopped event id: {e.SessionId}");
+            dlgSvcConnector.SessionStopped += (s, e) =>
+            {
+                Trace.WriteLine($"Session stopped event id: {e.SessionId}");
+                this.IsSirenStarted = false;
+            };
 
             // Canceled will be signaled when a turn is aborted or experiences an error
             // condition
-            dlgSvcConnector.Canceled += (s, e) => Trace.WriteLine($"Cancelled event details: {e.ErrorDetails}");
+            dlgSvcConnector.Canceled += (s, e) =>
+            {
+                Trace.WriteLine($"Cancelled event details: {e.ErrorDetails}");
+                this.IsSirenStarted = false;
+            };
 
             // ActivityReceived is the main way your bot will communicate with the client
             // and uses bot framework activities
