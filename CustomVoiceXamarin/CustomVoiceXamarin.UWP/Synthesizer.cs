@@ -20,7 +20,6 @@ namespace CustomVoiceXamarin.UWP
         private AudioGraph _audioGraph;
         private AudioDeviceOutputNode _outputNode;
         private AudioFrameInputNode _frameInputNode;
-        private PullAudioOutputStream _audioStream;
 
         private readonly ConcurrentQueue<PullAudioOutputStream> _streamList = new ConcurrentQueue<PullAudioOutputStream>();
 
@@ -70,7 +69,7 @@ namespace CustomVoiceXamarin.UWP
             CreateAudioGraphResult graphResult = await AudioGraph.CreateAsync(graphSettings);
             if (graphResult.Status != AudioGraphCreationStatus.Success)
             {
-                   Trace.WriteLine($"Error in AudioGraph construction: {graphResult.Status.ToString()}");
+                Trace.WriteLine($"Error in AudioGraph construction: {graphResult.Status.ToString()}");
             }
 
             _audioGraph = graphResult.Graph;
@@ -78,7 +77,7 @@ namespace CustomVoiceXamarin.UWP
             CreateAudioDeviceOutputNodeResult outputResult = await _audioGraph.CreateDeviceOutputNodeAsync();
             if (outputResult.Status != AudioDeviceNodeCreationStatus.Success)
             {
-                   Trace.WriteLine($"Error in audio OutputNode construction: {outputResult.Status.ToString()}");
+                Trace.WriteLine($"Error in audio OutputNode construction: {outputResult.Status.ToString()}");
             }
 
             _outputNode = outputResult.DeviceOutputNode;
@@ -126,11 +125,24 @@ namespace CustomVoiceXamarin.UWP
 
                 // Read audio data from the stream and copy it to the AudioFrame buffer
                 var readBytes = new byte[capacityInBytes];
-                uint bytesRead = _audioStream.Read(readBytes);
+                
+                PullAudioOutputStream _audioStream;
+                uint bytesRead = 0;
 
-                if (bytesRead == 0)
+                while (bytesRead == 0 && _streamList.TryPeek(out _audioStream))
+                {
+                    bytesRead = _audioStream.Read(readBytes);
+
+                    if (bytesRead == 0)
+                    {
+                        _streamList.TryDequeue(out _audioStream);
+                    }
+                }
+
+                if (bytesRead == 0 && _streamList.Count == 0)
                 {
                     _frameInputNode.Stop();
+                    _isPlaying = false;
                 }
 
                 for (int i = 0; i < bytesRead; i++)
@@ -151,7 +163,6 @@ namespace CustomVoiceXamarin.UWP
 
         private object _startPlayingLock = new object();
 
-        // TODO: switch to BlockingCollection<T> for producer/consumer pattern
         private void EnsureIsPlaying()
         {
             // prevent reentry
@@ -162,31 +173,9 @@ namespace CustomVoiceXamarin.UWP
                     return;
                 }
 
+                _frameInputNode.Start();
                 _isPlaying = true;
             }
-
-            Task.Run(async () =>
-            {
-                const int _playBufSize = 4096;
-
-                {
-                    byte[] buffer = new byte[_playBufSize];
-                    //audioTrack.Play();
-
-                    while (_streamList.TryDequeue(out PullAudioOutputStream stream))
-                    {
-                        _audioStream = stream;
-                        _frameInputNode.Start();
-                    }
-
-                    //audioTrack.Stop();
-
-                    _isPlaying = false;
-
-                    // trigger event that playback is stopped
-                    //EventBus.getDefault().post(new SynthesizerStopped());
-                }
-            });
         }
     }
 }
