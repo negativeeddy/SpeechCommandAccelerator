@@ -76,8 +76,14 @@ namespace CustomVoiceXamarin.Speech
 
                 RecognizedText = "Connecting to assistant";
 
-                CustomCommandsConfig dlgSvcConfig = CustomCommandsConfig.FromSubscription(SpeechApplicationId, SpeechSubscriptionKey, SpeechRegion);
-                dlgSvcConfig.Language = LanguageRecognition;
+                DialogServiceConfig dlgSvcConfig = DialogServiceConfig.FromSpeechCommandsAppId(SpeechApplicationId, SpeechSubscriptionKey, SpeechRegion);
+
+                if (dlgSvcConfig == null)
+                {
+                    Trace.WriteLine("BotConnectorConfig should not be null");
+                }
+
+                dlgSvcConfig.SpeechRecognitionLanguage = LanguageRecognition;
 
                 AudioConfig audioConfig = AudioConfig.FromDefaultMicrophoneInput(); //run from the microphone
 
@@ -120,13 +126,13 @@ namespace CustomVoiceXamarin.Speech
 
             // SessionStarted will notify when audio begins flowing to the service for a
             // turn
-            dlgSvcConnector.SessionStarted += (s, e) => Trace.WriteLine($"Session started event id: {e.SessionId}");
+            dlgSvcConnector.SessionStarted += (s, e) => Trace.WriteLine($"SPEECH SESSION STARTED event id: {e.SessionId}");
 
             // SessionStopped will notify when a turn is complete and it's safe to begin
             // listening again
             dlgSvcConnector.SessionStopped += (s, e) =>
             {
-                Trace.WriteLine($"Session stopped event id: {e.SessionId}");
+                Trace.WriteLine($"SPEECH SESSION STOPPED event id: {e.SessionId}");
                 this.IsSirenStarted = false;
             };
 
@@ -134,7 +140,7 @@ namespace CustomVoiceXamarin.Speech
             // condition
             dlgSvcConnector.Canceled += (s, e) =>
             {
-                Trace.WriteLine($"Cancelled event details: {e.ErrorDetails}");
+                Trace.WriteLine($"SPEECH CANCELLED event details: {e.ErrorDetails}");
                 this.IsSirenStarted = false;
             };
 
@@ -188,7 +194,7 @@ namespace CustomVoiceXamarin.Speech
             {
                 _resultsText = value;
                 Trace.WriteLine(_resultsText);
-                ResponseUpdated?.Invoke(this, new SirenEventArgs() { Text = value });
+                //ResponseUpdated?.Invoke(this, new SirenEventArgs() { Text = value });
             }
             get => _recognizedText;
         }
