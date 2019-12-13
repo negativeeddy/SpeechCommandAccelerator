@@ -1,6 +1,8 @@
-﻿using Microsoft.CognitiveServices.Speech;
+﻿using Microsoft.Bot.Schema;
+using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using Microsoft.CognitiveServices.Speech.Dialog;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -145,9 +147,9 @@ namespace CustomVoiceXamarin.Speech
 
             // ActivityReceived is the main way your bot will communicate with the client
             // and uses bot framework activities
-            dlgSvcConnector.ActivityReceived += (s, activityEventArgs) =>
+            dlgSvcConnector.ActivityReceived += async (s, activityEventArgs) =>
             {
-                string act = activityEventArgs.Activity;
+                string activityJson = activityEventArgs.Activity;
 
                 if (activityEventArgs.HasAudio)
                 {
@@ -157,10 +159,15 @@ namespace CustomVoiceXamarin.Speech
 
                 try
                 {
-                    //JSONObject obj = new JSONObject(act);
-                    //String sz = obj.getString("text");
-                    //ResultsText = sz.Substring(6);
-                    ResultsText = act; // TODO: extract the right info here base on the above comment
+                    var activity = JsonConvert.DeserializeObject<Activity>(activityJson);
+
+                    ResultsText = activity.Speak ?? activity.Text; // TODO: extract the right info here base on the above comment
+
+                    if (activity.InputHint == InputHints.ExpectingInput)
+                    {
+                        await _dialogService.ListenOnceAsync();
+
+                    }
                 }
                 catch (Exception e)
                 {
@@ -170,7 +177,7 @@ namespace CustomVoiceXamarin.Speech
 
                 IsStarted = false;
 
-                Trace.WriteLine("Received activity: {} " + act);
+                Trace.WriteLine("Received activity: {} " + activityJson);
             };
         }
 
