@@ -61,7 +61,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Synthesizer.cs" />
+    <Compile Include="AndroidSynthesizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidNativeLibrary Include="libs\arm64-v8a\libMicrosoft.CognitiveServices.Speech.core.so" />

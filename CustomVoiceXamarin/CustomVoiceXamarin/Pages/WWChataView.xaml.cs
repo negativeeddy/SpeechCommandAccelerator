@@ -1,22 +1,16 @@
 ﻿using CustomVoiceXamarin.Speech;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using static CustomVoiceXamarin.Speech.Siren;
 
 namespace CustomVoiceXamarin
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class WWChataView : ContentPage
     {
-        private Siren _siren = null;
+        private SpeechCommandRecognizer _siren = null;
         private ObservableCollection<Message> _messages = new ObservableCollection<Message>();
         //{
         //    new Message {
@@ -53,7 +47,7 @@ namespace CustomVoiceXamarin
 
         private async Task InitSiren()
         {
-            _siren = new Siren();
+            _siren = new SpeechCommandRecognizer(DependencyService.Get<ISynthesizer>());
             _siren.RecognitionUpdate += (s, e) => setText(e.Text);
             _siren.ResponseUpdated += (s, e) => AddBotText(e.Text);
             _siren.RecognizedUpdate += (s, e) => AddUserText(e.Text);

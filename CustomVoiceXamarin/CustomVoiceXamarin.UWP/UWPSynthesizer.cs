@@ -12,10 +12,10 @@ using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Xamarin.Forms;
 
-[assembly: Dependency(typeof(CustomVoiceXamarin.UWP.Synthesizer))]
+[assembly: Dependency(typeof(CustomVoiceXamarin.UWP.UwpSynthesizer))]
 namespace CustomVoiceXamarin.UWP
 {
-    public sealed class Synthesizer : ISynthesizer
+    public sealed class UwpSynthesizer : ISynthesizer
     {
         private AudioGraph _audioGraph;
         private AudioDeviceOutputNode _outputNode;
@@ -25,14 +25,14 @@ namespace CustomVoiceXamarin.UWP
 
         private bool _isPlaying = false;
 
-        public Synthesizer()
+        public UwpSynthesizer()
         {
         }
 
         public async Task InitializeAsync()
         {
             await EnsureMicIsEnabled();
-            await CreateAudioGraph();
+            await CreateAudioGraphAsync();
         }
 
         private static async Task EnsureMicIsEnabled()
@@ -63,7 +63,7 @@ namespace CustomVoiceXamarin.UWP
         /// <summary>
         /// Setup an AudioGraph with PCM input node and output for media playback
         /// </summary>
-        private async Task CreateAudioGraph()
+        private async Task CreateAudioGraphAsync()
         {
             AudioGraphSettings graphSettings = new AudioGraphSettings(Windows.Media.Render.AudioRenderCategory.Media);
             CreateAudioGraphResult graphResult = await AudioGraph.CreateAsync(graphSettings);

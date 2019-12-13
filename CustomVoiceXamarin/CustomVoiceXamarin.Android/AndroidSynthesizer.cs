@@ -7,11 +7,11 @@ using Java.IO;
 using Microsoft.CognitiveServices.Speech.Audio;
 using MediaEncoding = Android.Media.Encoding;
 
-[assembly: Xamarin.Forms.Dependency(typeof(CustomVoiceXamarin.Droid.Synthesizer))]
+[assembly: Xamarin.Forms.Dependency(typeof(CustomVoiceXamarin.Droid.AndroidSynthesizer))]
 
 namespace CustomVoiceXamarin.Droid
 {
-    public sealed class Synthesizer : ISynthesizer
+    public sealed class AndroidSynthesizer : ISynthesizer
     {
         private const string LOG_TAG = "Synthesizer";
         private const int SAMPLE_RATE = 16000;
@@ -26,7 +26,7 @@ namespace CustomVoiceXamarin.Droid
         private string _audioFileExtension = "wav";
         private bool _isPlaying = false;
 
-        public Synthesizer()
+        public AndroidSynthesizer()
         {
         }
 

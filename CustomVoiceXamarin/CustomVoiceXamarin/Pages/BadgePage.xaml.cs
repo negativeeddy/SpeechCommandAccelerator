@@ -14,7 +14,7 @@ namespace CustomVoiceXamarin
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class BadgePage : ContentPage
     {
-        private Siren _siren = null;
+        private SpeechCommandRecognizer _siren = null;
         private ObservableCollection<Message> _messages = new ObservableCollection<Message>();
 
         public BadgePage()
@@ -32,7 +32,7 @@ namespace CustomVoiceXamarin
 
         private async Task InitSiren()
         {
-            _siren = new Siren();
+            _siren = new SpeechCommandRecognizer(DependencyService.Get<ISynthesizer>());
             _siren.RecognitionUpdate += (s, e) => setText(e.Text);
             _siren.ResponseUpdated += (s, e) => AddBotText(e.Text);
             _siren.RecognizedUpdate += (s, e) => AddUserText(e.Text);

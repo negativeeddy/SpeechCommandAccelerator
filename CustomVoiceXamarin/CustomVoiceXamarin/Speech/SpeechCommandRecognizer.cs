@@ -12,40 +12,39 @@ using Xamarin.Forms;
 
 namespace CustomVoiceXamarin.Speech
 {
-    class Siren
+    public class SpeechCommandRecognizer
     {
         private string SpeechApplicationId = "5157984f-b198-4d96-b2da-31d08edba1ee";
         private string SpeechSubscriptionKey = "b5a192fa686c46ba9ba16d5b1553769f";
         private string SpeechRegion = "westus2";
         private string KeywordModel = @"C:\src\CustomVoiceXamarin\CustomVoiceXamarin\CustomVoiceXamarin.UWP\bin\x86\Debug\AppX\voice\Hey_Kira.zip";
 
-        private string Keyword = "";
         private string LanguageRecognition = "en-us";
 
         private string _recognizedText;
 
         private ISynthesizer _synthesizer;
 
-        public bool IsSirenStarted { get; private set; }
+        public bool IsStarted { get; private set; }
         public bool UseKeyWord { get; set; }
 
         private DialogServiceConnector _dialogService = null;
 
-        public Siren()
+        public SpeechCommandRecognizer(ISynthesizer synthesizer)
         {
-            _synthesizer = DependencyService.Get<ISynthesizer>();
+            _synthesizer = synthesizer;
         }
 
         public async Task StartAsync()
         {
             Trace.WriteLine("Starting Siren...");
 
-            if (IsSirenStarted)
+            if (IsStarted)
             {
                 return;
             }
 
-            IsSirenStarted = true;
+            IsStarted = true;
 
             try
             {
@@ -133,7 +132,7 @@ namespace CustomVoiceXamarin.Speech
             dlgSvcConnector.SessionStopped += (s, e) =>
             {
                 Trace.WriteLine($"SPEECH SESSION STOPPED event id: {e.SessionId}");
-                this.IsSirenStarted = false;
+                this.IsStarted = false;
             };
 
             // Canceled will be signaled when a turn is aborted or experiences an error
@@ -141,7 +140,7 @@ namespace CustomVoiceXamarin.Speech
             dlgSvcConnector.Canceled += (s, e) =>
             {
                 Trace.WriteLine($"SPEECH CANCELLED event details: {e.ErrorDetails}");
-                this.IsSirenStarted = false;
+                this.IsStarted = false;
             };
 
             // ActivityReceived is the main way your bot will communicate with the client
@@ -169,7 +168,7 @@ namespace CustomVoiceXamarin.Speech
 
                 }
 
-                IsSirenStarted = false;
+                IsStarted = false;
 
                 Trace.WriteLine("Received activity: {} " + act);
             };
