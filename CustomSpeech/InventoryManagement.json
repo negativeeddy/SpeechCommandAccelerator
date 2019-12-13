@@ -34,18 +34,34 @@
       "# ShrinkInventoryQuantity",
       "- How many of those?",
       "- In what quantity?",
-      "# MakingInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
-      "- It is recorded. {Quantity}  {TheItem} has been made",
-      "- Make achieved for  {Quantity}  {TheItem}",
-      "- successfully made  {Quantity}  {TheItem}",
-      "- finished making {Quantity} {TheItem}",
-      "# MakingInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
+      "# ShrinkingInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
+      "- It is recorded. {Quantity}  {TheItem} has been shrunk",
+      "- Shrink achieved for  {Quantity}  {TheItem}",
+      "- successfully shrunk  {Quantity}  {TheItem}",
+      "- finished shrinking {Quantity} {TheItem}",
+      "# ShrinkingInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
       "- sorry, my pencil broke. Please try again.",
       "- apologies, my dog distracted me, try again.",
       "# ReceiveInventoryfea53b301b7011ea83f5997e3db07222",
       "- recevied (sort of)",
       "# ShrinkInventorye9107b401b7011ea83f5997e3db07222",
       "- Shrunk {Quantity} {TheItem} (sort of)",
+      "# ReceiveInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
+      "- It is recorded. {Quantity}  {TheItem} has been recieved",
+      "- Receive achieved for  {Quantity}  {TheItem}",
+      "- successfully received  {Quantity}  {TheItem}",
+      "- finished receiving {Quantity} {TheItem}",
+      "# ReceiveInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
+      "- sorry, my pencil broke. Please try again.",
+      "- apologies, my dog distracted me, try again.",
+      "# SlackingInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
+      "- It is recorded. {Quantity}  {TheItem} has been shrunk",
+      "- shrink achieved for  {Quantity}  {TheItem}",
+      "- successfully shrunk  {Quantity}  {TheItem}",
+      "- finished shrinking {Quantity} {TheItem}",
+      "# SlackingInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
+      "- sorry, my pencil broke. Please try again.",
+      "- apologies, my dog distracted me, try again.",
       "# ShrinkInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
       "- It is recorded. {Quantity}  {TheItem} has been shrunk",
       "- shrink achieved for  {Quantity}  {TheItem}",
@@ -54,23 +70,14 @@
       "# ShrinkInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
       "- sorry, my pencil broke. Please try again.",
       "- apologies, my dog distracted me, try again.",
-      "# ReceiveInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
-      "- It is recorded. {Quantity}  {TheItem} has been received",
-      "- delete achieved for  {Quantity}  {TheItem}",
-      "- successfully deleted  {Quantity}  {TheItem}",
-      "- finished deleting {Quantity} {TheItem}",
-      "# ReceiveInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
-      "- sorry, my pencil broke. Please try again.",
-      "- apologies, my dog distracted me, try again.",
-      "# SlackingInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
-      "      - It is recorded. {Quantity}  {TheItem} has been slacked",
-      "      - Slacking achieved for  {Quantity}  {TheItem}",
-      "      - successfully slacked  {Quantity}  {TheItem}",
-      "      - finished slacking {Quantity} {TheItem}",
-      "# SlackingInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
-      "sorry, my pencil broke. Please try again.",
-      "apologies, my dog distracted me, try again.",
-      ""
+      "# MakeInventoryInventoryManagementAPIonSuccess6d34b7001d4d11eaa1a9e12c40837e83",
+      "- It is recorded. {Quantity}  {TheItem} has been slacked",
+      "- Slacking achieved for  {Quantity}  {TheItem}",
+      "- successfully slacked  {Quantity}  {TheItem}",
+      "- finished slacking {Quantity} {TheItem}",
+      "# MakeInventoryInventoryManagementAPIonFailure6d34b7001d4d11eaa1a9e12c40837e83",
+      "- sorry, my pencil broke. Please try again",
+      "- apologies, my dog distracted me, try again."
     ],
     "globalParameters": [],
     "commands": [
@@ -350,7 +357,7 @@
               {
                 "type": "CallHttpEndpoint",
                 "content": {},
-                "parameters": "action=slack&quantity={Quantity}&product={TheItem}",
+                "parameters": "action=shrink&quantity={Quantity}&product={TheItem}",
                 "name": "InventoryManagementAPI",
                 "onSuccess": {
                   "type": "SpeechResponse",
@@ -507,7 +514,12 @@
         ],
         "completionStrategy": "OnRequiredParameters",
         "triggeringExamples": [
-          "receive"
+          "recieve",
+          "recieve {TheItem}",
+          "recieve {Quantity} {TheItem}",
+          "take in",
+          "take in {TheItem}",
+          "take in {Quantity} {TheItem}"
         ]
       },
       {
@@ -603,6 +615,7 @@
         "rules": [],
         "completionRules": [
           {
+            "name": "Making Finished",
             "conditions": [
               {
                 "type": "True"
@@ -618,32 +631,37 @@
                   "type": "SpeechResponse",
                   "response": {
                     "type": "Template",
-                    "templateName": "# MakingInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853"
+                    "templateName": "# MakeInventoryInventoryManagementAPIonSuccess6d34b7001d4d11eaa1a9e12c40837e83"
                   }
                 },
                 "onFailure": {
                   "type": "SpeechResponse",
                   "response": {
                     "type": "Template",
-                    "templateName": "# MakingInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853"
+                    "templateName": "# MakeInventoryInventoryManagementAPIonFailure6d34b7001d4d11eaa1a9e12c40837e83"
                   }
                 }
               }
             ],
-            "name": "Finished Making",
-            "nextTurnExpectations": [],
-            "postExecutionState": "None"
+            "postExecutionState": "None",
+            "nextTurnExpectations": []
           }
         ],
         "completionStrategy": "OnRequiredParameters",
         "triggeringExamples": [
-          "make"
+          "make",
+          "make a {TheItem}",
+          "make {Quantity} {TheItem}",
+          "I made",
+          "I made {TheItem}",
+          "I made a {TheItem}",
+          "I made {Quantity} {TheItem}"
         ]
       }
     ],
     "modelMetadata": {
-      "modelId": "a3c02690-f830-451d-b9aa-54614545510f",
-      "lastTrainedModelId": "0f44bf0f-640b-4e3f-af2a-c9053389434b",
+      "modelId": "99645ee5-f6f0-432a-a12d-84ff50fea404",
+      "lastTrainedModelId": "f0efd69b-4933-4ea1-804c-d0a43e6de3a7",
       "lastPublishedModelId": "0f44bf0f-640b-4e3f-af2a-c9053389434b",
       "lastTrainedVersionId": "1.0-test",
       "published": false,
