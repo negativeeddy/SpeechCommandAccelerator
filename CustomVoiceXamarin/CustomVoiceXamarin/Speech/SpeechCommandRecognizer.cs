@@ -75,18 +75,18 @@ namespace CustomVoiceXamarin.Speech
 
                 RecognizedText = "Connecting to assistant";
 
-                CustomCommandsConfig dlgSvcConfig = CustomCommandsConfig.FromSubscription(SpeechApplicationId, SpeechSubscriptionKey, SpeechRegion);
+                CustomCommandsConfig commandConfig = CustomCommandsConfig.FromSubscription(SpeechApplicationId, SpeechSubscriptionKey, SpeechRegion);
 
-                if (dlgSvcConfig == null)
+                if (commandConfig == null)
                 {
                     Trace.WriteLine("BotConnectorConfig should not be null");
                 }
 
-                dlgSvcConfig.Language = LanguageRecognition;
+                commandConfig.Language = LanguageRecognition;
 
                 AudioConfig audioConfig = AudioConfig.FromDefaultMicrophoneInput(); //run from the microphone
 
-                _dialogService = new DialogServiceConnector(dlgSvcConfig, audioConfig);
+                _dialogService = new DialogServiceConnector(commandConfig, audioConfig);
 
                 // Configure all event listeners
                 RegisterEventListeners(_dialogService);
