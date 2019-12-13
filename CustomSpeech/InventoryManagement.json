@@ -34,18 +34,43 @@
       "# ShrinkInventoryQuantity",
       "- How many of those?",
       "- In what quantity?",
-      "# SlackingInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
-      "- It is recorded. {Quantity}  {TheItem} has been deleted",
-      "- delete achieved for  {Quantity}  {TheItem}",
-      "- successfully deleted  {Quantity}  {TheItem}",
-      "- finished deleting {Quantity} {TheItem}",
-      "# SlackingInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
+      "# MakingInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
+      "- It is recorded. {Quantity}  {TheItem} has been made",
+      "- Make achieved for  {Quantity}  {TheItem}",
+      "- successfully made  {Quantity}  {TheItem}",
+      "- finished making {Quantity} {TheItem}",
+      "# MakingInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
       "- sorry, my pencil broke. Please try again.",
       "- apologies, my dog distracted me, try again.",
       "# ReceiveInventoryfea53b301b7011ea83f5997e3db07222",
       "- recevied (sort of)",
       "# ShrinkInventorye9107b401b7011ea83f5997e3db07222",
-      "- Shrunk {Quantity} {TheItem} (sort of)"
+      "- Shrunk {Quantity} {TheItem} (sort of)",
+      "# ShrinkInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
+      "- It is recorded. {Quantity}  {TheItem} has been shrunk",
+      "- shrink achieved for  {Quantity}  {TheItem}",
+      "- successfully shrunk  {Quantity}  {TheItem}",
+      "- finished shrinking {Quantity} {TheItem}",
+      "# ShrinkInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
+      "- sorry, my pencil broke. Please try again.",
+      "- apologies, my dog distracted me, try again.",
+      "# ReceiveInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
+      "- It is recorded. {Quantity}  {TheItem} has been received",
+      "- delete achieved for  {Quantity}  {TheItem}",
+      "- successfully deleted  {Quantity}  {TheItem}",
+      "- finished deleting {Quantity} {TheItem}",
+      "# ReceiveInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
+      "- sorry, my pencil broke. Please try again.",
+      "- apologies, my dog distracted me, try again.",
+      "# SlackingInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
+      "      - It is recorded. {Quantity}  {TheItem} has been slacked",
+      "      - Slacking achieved for  {Quantity}  {TheItem}",
+      "      - successfully slacked  {Quantity}  {TheItem}",
+      "      - finished slacking {Quantity} {TheItem}",
+      "# SlackingInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
+      "sorry, my pencil broke. Please try again.",
+      "apologies, my dog distracted me, try again.",
+      ""
     ],
     "globalParameters": [],
     "commands": [
@@ -120,14 +145,14 @@
                   "Macchiato": [
                     "Macchiatos"
                   ],
-                  "Ninja Cat Cold Brew\t": [
+                  "Ninja Cat Cold Brew": [
                     "ninja cat",
                     "cold brew",
                     "Ninja Cat Cold Brews",
                     "ninja cats",
                     "cold brews"
                   ],
-                  "Unicorn Cappucino\t": [
+                  "Unicorn Cappucino": [
                     "unicorn",
                     "unicorn drink",
                     "unicorns",
@@ -255,14 +280,14 @@
                   "Macchiato": [
                     "Macchiatos"
                   ],
-                  "Ninja Cat Cold Brew\t": [
+                  "Ninja Cat Cold Brew": [
                     "ninja cat",
                     "cold brew",
                     "Ninja Cat Cold Brews",
                     "ninja cats",
                     "cold brews"
                   ],
-                  "Unicorn Cappucino\t": [
+                  "Unicorn Cappucino": [
                     "unicorn",
                     "unicorn drink",
                     "unicorns",
@@ -323,26 +348,128 @@
             ],
             "actions": [
               {
-                "type": "SpeechResponse",
-                "response": {
-                  "type": "Template",
-                  "templateName": "# ShrinkInventorye9107b401b7011ea83f5997e3db07222"
+                "type": "CallHttpEndpoint",
+                "content": {},
+                "parameters": "action=slack&quantity={Quantity}&product={TheItem}",
+                "name": "InventoryManagementAPI",
+                "onSuccess": {
+                  "type": "SpeechResponse",
+                  "response": {
+                    "type": "Template",
+                    "templateName": "# ShrinkInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853"
+                  }
+                },
+                "onFailure": {
+                  "type": "SpeechResponse",
+                  "response": {
+                    "type": "Template",
+                    "templateName": "# ShrinkInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853"
+                  }
                 }
               }
             ],
-            "name": "Fake Shrink",
+            "name": "Finished Shrinking",
             "nextTurnExpectations": [],
             "postExecutionState": "None"
           }
         ],
         "completionStrategy": "OnRequiredParameters",
         "triggeringExamples": [
-          "shrink"
+          "shrink",
+          "shrink {TheItem}",
+          "shrink {Quantity} {TheItem}"
         ]
       },
       {
         "name": "ReceiveInventory",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "TheItem",
+            "type": {
+              "name": "String",
+              "configuration": {
+                "type": "StringList",
+                "values": {
+                  "Latte": [
+                    "lattes"
+                  ],
+                  "Espresso": [
+                    "espressos"
+                  ],
+                  "Chocolate Muffin": [
+                    "muffin",
+                    "muffins",
+                    "chocolate muffins"
+                  ],
+                  "Tyrannosaurus Tea": [
+                    "trex tea",
+                    "Tyrannosaurus Teas",
+                    "trex teas"
+                  ],
+                  "Cappuccino": [
+                    "Cappuccinos"
+                  ],
+                  "Macchiato": [
+                    "Macchiatos"
+                  ],
+                  "Ninja Cat Cold Brew": [
+                    "ninja cat",
+                    "cold brew",
+                    "Ninja Cat Cold Brews",
+                    "ninja cats",
+                    "cold brews"
+                  ],
+                  "Unicorn Cappucino": [
+                    "unicorn",
+                    "unicorn drink",
+                    "unicorns",
+                    "unicorn drinks",
+                    "Unicorn Cappucinos"
+                  ],
+                  "Croissant": [
+                    "crescent",
+                    "crescent rolls",
+                    "crescents",
+                    "Croissants",
+                    "Croissant roll",
+                    "Croissant rolls"
+                  ],
+                  "Danish Pastry": [
+                    "danish",
+                    "cheese danish",
+                    "Danish Pastry",
+                    "danishes",
+                    "cheese danishes",
+                    "Danish Pastries"
+                  ],
+                  "Fruit Bread": [
+                    "bread",
+                    "fruit loaf",
+                    "loaf of fruit bread"
+                  ],
+                  "Americano": [
+                    "americanos"
+                  ]
+                }
+              }
+            },
+            "elicitResponse": {
+              "type": "Template",
+              "templateName": "# ShrinkInventoryTheItem"
+            }
+          },
+          {
+            "name": "Quantity",
+            "type": {
+              "name": "Number"
+            },
+            "validations": [],
+            "elicitResponse": {
+              "type": "Template",
+              "templateName": "# ShrinkInventoryQuantity"
+            }
+          }
+        ],
         "rules": [],
         "completionRules": [
           {
@@ -353,14 +480,27 @@
             ],
             "actions": [
               {
-                "type": "SpeechResponse",
-                "response": {
-                  "type": "Template",
-                  "templateName": "# ReceiveInventoryfea53b301b7011ea83f5997e3db07222"
+                "type": "CallHttpEndpoint",
+                "content": {},
+                "parameters": "action=receive&quantity={Quantity}&product={TheItem}",
+                "name": "InventoryManagementAPI",
+                "onSuccess": {
+                  "type": "SpeechResponse",
+                  "response": {
+                    "type": "Template",
+                    "templateName": "# ReceiveInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853"
+                  }
+                },
+                "onFailure": {
+                  "type": "SpeechResponse",
+                  "response": {
+                    "type": "Template",
+                    "templateName": "# ReceiveInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853"
+                  }
                 }
               }
             ],
-            "name": "Fake ",
+            "name": "Finished Receiving",
             "nextTurnExpectations": [],
             "postExecutionState": "None"
           }
@@ -372,9 +512,129 @@
       },
       {
         "name": "MakeInventory",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "TheItem",
+            "type": {
+              "name": "String",
+              "configuration": {
+                "type": "StringList",
+                "values": {
+                  "Latte": [
+                    "lattes"
+                  ],
+                  "Espresso": [
+                    "espressos"
+                  ],
+                  "Chocolate Muffin": [
+                    "muffin",
+                    "muffins",
+                    "chocolate muffins"
+                  ],
+                  "Tyrannosaurus Tea": [
+                    "trex tea",
+                    "Tyrannosaurus Teas",
+                    "trex teas"
+                  ],
+                  "Cappuccino": [
+                    "Cappuccinos"
+                  ],
+                  "Macchiato": [
+                    "Macchiatos"
+                  ],
+                  "Ninja Cat Cold Brew": [
+                    "ninja cat",
+                    "cold brew",
+                    "Ninja Cat Cold Brews",
+                    "ninja cats",
+                    "cold brews"
+                  ],
+                  "Unicorn Cappucino": [
+                    "unicorn",
+                    "unicorn drink",
+                    "unicorns",
+                    "unicorn drinks",
+                    "Unicorn Cappucinos"
+                  ],
+                  "Croissant": [
+                    "crescent",
+                    "crescent rolls",
+                    "crescents",
+                    "Croissants",
+                    "Croissant roll",
+                    "Croissant rolls"
+                  ],
+                  "Danish Pastry": [
+                    "danish",
+                    "cheese danish",
+                    "Danish Pastry",
+                    "danishes",
+                    "cheese danishes",
+                    "Danish Pastries"
+                  ],
+                  "Fruit Bread": [
+                    "bread",
+                    "fruit loaf",
+                    "loaf of fruit bread"
+                  ],
+                  "Americano": [
+                    "americanos"
+                  ]
+                }
+              }
+            },
+            "elicitResponse": {
+              "type": "Template",
+              "templateName": "# ShrinkInventoryTheItem"
+            }
+          },
+          {
+            "name": "Quantity",
+            "type": {
+              "name": "Number"
+            },
+            "validations": [],
+            "elicitResponse": {
+              "type": "Template",
+              "templateName": "# ShrinkInventoryQuantity"
+            }
+          }
+        ],
         "rules": [],
-        "completionRules": [],
+        "completionRules": [
+          {
+            "conditions": [
+              {
+                "type": "True"
+              }
+            ],
+            "actions": [
+              {
+                "type": "CallHttpEndpoint",
+                "content": {},
+                "parameters": "action=make&quantity={Quantity}&product={TheItem}",
+                "name": "InventoryManagementAPI",
+                "onSuccess": {
+                  "type": "SpeechResponse",
+                  "response": {
+                    "type": "Template",
+                    "templateName": "# MakingInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853"
+                  }
+                },
+                "onFailure": {
+                  "type": "SpeechResponse",
+                  "response": {
+                    "type": "Template",
+                    "templateName": "# MakingInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853"
+                  }
+                }
+              }
+            ],
+            "name": "Finished Making",
+            "nextTurnExpectations": [],
+            "postExecutionState": "None"
+          }
+        ],
         "completionStrategy": "OnRequiredParameters",
         "triggeringExamples": [
           "make"
@@ -382,11 +642,11 @@
       }
     ],
     "modelMetadata": {
-      "modelId": "0f44bf0f-640b-4e3f-af2a-c9053389434b",
+      "modelId": "a3c02690-f830-451d-b9aa-54614545510f",
       "lastTrainedModelId": "0f44bf0f-640b-4e3f-af2a-c9053389434b",
       "lastPublishedModelId": "0f44bf0f-640b-4e3f-af2a-c9053389434b",
       "lastTrainedVersionId": "1.0-test",
-      "published": true,
+      "published": false,
       "requiresTraining": false
     }
   }
