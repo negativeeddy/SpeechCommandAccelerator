@@ -2,286 +2,391 @@
     "type": "CommandsDialogModel",
     "culture": "en-us",
     "recognizer": {
-        "application": "78a87dc2-a099-422b-a0bc-b9d0a7aedefd",
-        "isStaging": false,
-        "versionId": "1.0",
-        "endpointKey": "edb485a1a1694ca8a529a3fc490a94b0",
-        "region": "westus",
-        "type": "luis"
+      "application": "b84da5d0-1c96-40da-bb14-3753b8488ddf",
+      "isStaging": false,
+      "versionId": "1.0",
+      "endpointKey": "74697a3d749c486ea0559e4eabc055c7",
+      "region": "westus",
+      "type": "luis"
     },
-    "httpEndpoints": [],
-    "lgTemplates": [
-        "# SlackingOnOff",
-        "- On or Off?",
-        "# SlackingsubjectDevice",
-        "- which device",
-        "# FallbackCommandQuantity",
-        "- What is the Quantity?",
-        "# FallbackResponse",
-        "- This is the default failure message. I have failed you. I'm sorry",
-        "# testingparams2f0a4a20fc1f11e9ae46f5970c31ab5f",
-        "- test is complete, sir. You had ",
-        "# OnOffSample4e4067a0fcb311e9ae46f5970c31ab5f",
-        "- Ok, turning {OnOff} the {subjectDevice}",
-        "- the {subjectDevice} is now {OnOff}",
-        "# ReceivingMerchd23ebcf0fbff11e9970dcfbcb0b2c091",
-        "- Got it. You have",
-        "- Yep, received ",
-        "# MarkOutfa726bb0fc1b11e995be1b3fd61d50b3",
-        "- Done marking",
-        "# SlackingQuantity",
-        "- How many?",
-        "# SlackingProduct",
-        "- Which product?",
-        "# Slacking5ca5c1f0fbff11e9970dcfbcb0b2c091",
-        "- OK, slacking {Product}"
+    "httpEndpoints": [
+      {
+        "name": "InventoryManagementAPI",
+        "method": "GET",
+        "url": "https://speechacceleratorweb.azurewebsites.net/api/Inventory/UpdateInventory",
+        "headers": {},
+        "sendFrame": false,
+        "updateFrame": false
+      }
     ],
-    "globalParameters": [
-        {
+    "lgTemplates": [
+      "# FallbackResponse",
+      "- I'm sorry Dave, I can't do that",
+      "# SlackingInventorydd2b9c7007fb11eaa66f05c14664ae5a",
+      "- Type your response(s) here.",
+      "# SlackingInventoryTheItem",
+      "- Which item?",
+      "# SlackingInventoryQuantity",
+      "- How many of those?",
+      "- In what quantity?",
+      "# ShrinkInventoryTheItem",
+      "- Which item?",
+      "# ShrinkInventoryQuantity",
+      "- How many of those?",
+      "- In what quantity?",
+      "# SlackingInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853",
+      "- It is recorded. {Quantity}  {TheItem} has been deleted",
+      "- delete achieved for  {Quantity}  {TheItem}",
+      "- successfully deleted  {Quantity}  {TheItem}",
+      "- finished deleting {Quantity} {TheItem}",
+      "# SlackingInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853",
+      "- sorry, my pencil broke. Please try again.",
+      "- apologies, my dog distracted me, try again.",
+      "# ReceiveInventoryfea53b301b7011ea83f5997e3db07222",
+      "- recevied (sort of)",
+      "# ShrinkInventorye9107b401b7011ea83f5997e3db07222",
+      "- Shrunk {Quantity} {TheItem} (sort of)"
+    ],
+    "globalParameters": [],
+    "commands": [
+      {
+        "name": "FallbackCommand",
+        "parameters": [],
+        "rules": [],
+        "completionRules": [
+          {
+            "conditions": [
+              {
+                "type": "True"
+              }
+            ],
+            "actions": [
+              {
+                "type": "SpeechResponse",
+                "response": {
+                  "type": "Template",
+                  "templateName": "# FallbackResponse"
+                }
+              }
+            ],
+            "name": "DefaultResponse",
+            "postExecutionState": "None"
+          }
+        ],
+        "completionStrategy": "OnRequiredParameters",
+        "triggeringExamples": [
+          "> - You can start sentences with '>' to add comments.",
+          "> - You can also use parameters by adding the name of the parameter within curly braces, i.e.",
+          ">     Set an alarm to {YourDateParameterName}",
+          ">   Where YourDateParameterName is the name of a parameter defined in the 'Parameters' section.",
+          "Help",
+          "Help me",
+          "What can you do?",
+          "How can I start?",
+          "Hello",
+          "Hi"
+        ],
+        "multiTurnExamples": []
+      },
+      {
+        "name": "SlackingInventory",
+        "parameters": [
+          {
+            "name": "TheItem",
+            "type": {
+              "name": "String",
+              "configuration": {
+                "type": "StringList",
+                "values": {
+                  "Latte": [
+                    "lattes"
+                  ],
+                  "Espresso": [
+                    "espressos"
+                  ],
+                  "Chocolate Muffin": [
+                    "muffin",
+                    "muffins",
+                    "chocolate muffins"
+                  ],
+                  "Tyrannosaurus Tea": [
+                    "trex tea",
+                    "Tyrannosaurus Teas",
+                    "trex teas"
+                  ],
+                  "Cappuccino": [
+                    "Cappuccinos"
+                  ],
+                  "Macchiato": [
+                    "Macchiatos"
+                  ],
+                  "Ninja Cat Cold Brew\t": [
+                    "ninja cat",
+                    "cold brew",
+                    "Ninja Cat Cold Brews",
+                    "ninja cats",
+                    "cold brews"
+                  ],
+                  "Unicorn Cappucino\t": [
+                    "unicorn",
+                    "unicorn drink",
+                    "unicorns",
+                    "unicorn drinks",
+                    "Unicorn Cappucinos"
+                  ],
+                  "Croissant": [
+                    "crescent",
+                    "crescent rolls",
+                    "crescents",
+                    "Croissants",
+                    "Croissant roll",
+                    "Croissant rolls"
+                  ],
+                  "Danish Pastry": [
+                    "danish",
+                    "cheese danish",
+                    "Danish Pastry",
+                    "danishes",
+                    "cheese danishes",
+                    "Danish Pastries"
+                  ],
+                  "Fruit Bread": [
+                    "bread",
+                    "fruit loaf",
+                    "loaf of fruit bread"
+                  ],
+                  "Americano": [
+                    "americanos"
+                  ]
+                }
+              }
+            },
+            "elicitResponse": {
+              "type": "Template",
+              "templateName": "# SlackingInventoryTheItem"
+            }
+          },
+          {
             "name": "Quantity",
             "type": {
-                "name": "Number"
+              "name": "Number"
             },
+            "validations": [],
             "elicitResponse": {
-                "type": "Template",
-                "templateName": "# SlackingQuantity"
+              "type": "Template",
+              "templateName": "# SlackingInventoryQuantity"
             }
-        },
-        {
-            "name": "Product",
-            "type": {
-                "name": "String",
-                "configuration": {
-                    "type": "StringList",
-                    "values": {
-                        "muffin": [
-                            "muffins",
-                            "blueberry muffins",
-                            "blueberry muffin"
-                        ],
-                        "danish": []
-                    }
-                }
-            },
-            "elicitResponse": {
-                "type": "Template",
-                "templateName": "# SlackingProduct"
-            }
-        }
-    ],
-    "commands": [
-        {
-            "name": "FallbackCommand",
-            "parameters": [],
-            "rules": [],
-            "completionRules": [
-                {
-                    "name": "DefaultResponse",
-                    "conditions": [
-                        {
-                            "type": "True"
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "type": "SpeechResponse",
-                            "response": {
-                                "type": "Template",
-                                "templateName": "# FallbackResponse"
-                            }
-                        }
-                    ],
-                    "postExecutionState": "None"
-                }
+          }
+        ],
+        "rules": [],
+        "completionRules": [
+          {
+            "conditions": [
+              {
+                "type": "True"
+              }
             ],
-            "completionStrategy": "OnRequiredParameters",
-            "triggeringExamples": [
-                "> - You can start sentences with '>' to add comments.",
-                "> - You can also use parameters by adding the name of the parameter within curly braces, i.e.",
-                ">     Set an alarm to {YourDateParameterName}",
-                ">   Where YourDateParameterName is the name of a parameter defined in the 'Parameters' section.",
-                "Help",
-                "Help me",
-                "What can you do?",
-                "How can I start?",
-                "Hello",
-                "Hi"
-            ],
-            "multiTurnExamples": []
-        },
-        {
-            "name": "OnOffSample",
-            "parameters": [
-                {
-                    "name": "OnOff",
-                    "type": {
-                        "name": "String",
-                        "configuration": {
-                            "type": "StringList",
-                            "values": {
-                                "on": [],
-                                "off": []
-                            }
-                        }
-                    },
-                    "elicitResponse": {
-                        "type": "Template",
-                        "templateName": "# SlackingOnOff"
-                    }
+            "actions": [
+              {
+                "type": "CallHttpEndpoint",
+                "content": {},
+                "parameters": "action=slack&quantity={Quantity}&product={TheItem}",
+                "name": "InventoryManagementAPI",
+                "onSuccess": {
+                  "type": "SpeechResponse",
+                  "response": {
+                    "type": "Template",
+                    "templateName": "# SlackingInventoryInventoryManagementAPIonSuccessfe40f3600a1211ea9887a96d25392853"
+                  }
                 },
-                {
-                    "name": "subjectDevice",
-                    "type": {
-                        "name": "String",
-                        "configuration": {
-                            "type": "StringList",
-                            "values": {
-                                "TV": [
-                                    "television"
-                                ],
-                                "fan": [
-                                    "ceiling fan",
-                                    "breezy thing"
-                                ]
-                            }
-                        }
-                    },
-                    "elicitResponse": {
-                        "type": "Template",
-                        "templateName": "# SlackingsubjectDevice"
-                    }
+                "onFailure": {
+                  "type": "SpeechResponse",
+                  "response": {
+                    "type": "Template",
+                    "templateName": "# SlackingInventoryInventoryManagementAPIonFailurefe40f3600a1211ea9887a96d25392853"
+                  }
                 }
+              }
             ],
-            "rules": [],
-            "completionRules": [
-                {
-                    "name": "OnOffResponse",
-                    "conditions": [
-                        {
-                            "type": "True"
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "type": "SpeechResponse",
-                            "response": {
-                                "type": "Template",
-                                "templateName": "# OnOffSample4e4067a0fcb311e9ae46f5970c31ab5f"
-                            }
-                        }
-                    ],
-                    "nextTurnExpectations": [],
-                    "postExecutionState": "None"
+            "name": "Finished Slacking",
+            "nextTurnExpectations": [],
+            "postExecutionState": "None"
+          }
+        ],
+        "completionStrategy": "OnRequiredParameters",
+        "triggeringExamples": [
+          "delete",
+          "slack",
+          "slack {TheItem}",
+          "delete {TheItem}",
+          "slack {Quantity} {TheItem}",
+          "delete {Quantity} {TheItem}"
+        ]
+      },
+      {
+        "name": "ShrinkInventory",
+        "parameters": [
+          {
+            "name": "TheItem",
+            "type": {
+              "name": "String",
+              "configuration": {
+                "type": "StringList",
+                "values": {
+                  "Latte": [
+                    "lattes"
+                  ],
+                  "Espresso": [
+                    "espressos"
+                  ],
+                  "Chocolate Muffin": [
+                    "muffin",
+                    "muffins",
+                    "chocolate muffins"
+                  ],
+                  "Tyrannosaurus Tea": [
+                    "trex tea",
+                    "Tyrannosaurus Teas",
+                    "trex teas"
+                  ],
+                  "Cappuccino": [
+                    "Cappuccinos"
+                  ],
+                  "Macchiato": [
+                    "Macchiatos"
+                  ],
+                  "Ninja Cat Cold Brew\t": [
+                    "ninja cat",
+                    "cold brew",
+                    "Ninja Cat Cold Brews",
+                    "ninja cats",
+                    "cold brews"
+                  ],
+                  "Unicorn Cappucino\t": [
+                    "unicorn",
+                    "unicorn drink",
+                    "unicorns",
+                    "unicorn drinks",
+                    "Unicorn Cappucinos"
+                  ],
+                  "Croissant": [
+                    "crescent",
+                    "crescent rolls",
+                    "crescents",
+                    "Croissants",
+                    "Croissant roll",
+                    "Croissant rolls"
+                  ],
+                  "Danish Pastry": [
+                    "danish",
+                    "cheese danish",
+                    "Danish Pastry",
+                    "danishes",
+                    "cheese danishes",
+                    "Danish Pastries"
+                  ],
+                  "Fruit Bread": [
+                    "bread",
+                    "fruit loaf",
+                    "loaf of fruit bread"
+                  ],
+                  "Americano": [
+                    "americanos"
+                  ]
                 }
+              }
+            },
+            "elicitResponse": {
+              "type": "Template",
+              "templateName": "# ShrinkInventoryTheItem"
+            }
+          },
+          {
+            "name": "Quantity",
+            "type": {
+              "name": "Number"
+            },
+            "validations": [],
+            "elicitResponse": {
+              "type": "Template",
+              "templateName": "# ShrinkInventoryQuantity"
+            }
+          }
+        ],
+        "rules": [],
+        "completionRules": [
+          {
+            "conditions": [
+              {
+                "type": "True"
+              }
             ],
-            "completionStrategy": "OnRequiredParameters",
-            "triggeringExamples": [
-                "turn {OnOff} the {subjectDevice}",
-                "{subjectDevice} {OnOff}",
-                "turn it {OnOff}",
-                "turn something {OnOff}",
-                "turn something"
-            ]
-        },
-        {
-            "name": "Slacking",
-            "parameters": [],
-            "rules": [],
-            "completionRules": [
-                {
-                    "name": "FinishedSlacking",
-                    "conditions": [
-                        {
-                            "type": "True"
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "type": "SpeechResponse",
-                            "response": {
-                                "type": "Template",
-                                "templateName": "# Slacking5ca5c1f0fbff11e9970dcfbcb0b2c091"
-                            }
-                        }
-                    ],
-                    "nextTurnExpectations": [],
-                    "postExecutionState": "None"
+            "actions": [
+              {
+                "type": "SpeechResponse",
+                "response": {
+                  "type": "Template",
+                  "templateName": "# ShrinkInventorye9107b401b7011ea83f5997e3db07222"
                 }
+              }
             ],
-            "completionStrategy": "OnRequiredParameters",
-            "triggeringExamples": [
-                "delete",
-                "delete {Product}",
-                "delete {Quantity} of {Product}",
-                "delete {Quantity} {Product}"
-            ]
-        },
-        {
-            "name": "MarkOut",
-            "parameters": [],
-            "rules": [],
-            "completionRules": [
-                {
-                    "name": "FinishedMarking",
-                    "conditions": [
-                        {
-                            "type": "True"
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "type": "SpeechResponse",
-                            "response": {
-                                "type": "Template",
-                                "templateName": "# MarkOutfa726bb0fc1b11e995be1b3fd61d50b3"
-                            }
-                        }
-                    ],
-                    "nextTurnExpectations": [],
-                    "postExecutionState": "None"
+            "name": "Fake Shrink",
+            "nextTurnExpectations": [],
+            "postExecutionState": "None"
+          }
+        ],
+        "completionStrategy": "OnRequiredParameters",
+        "triggeringExamples": [
+          "shrink"
+        ]
+      },
+      {
+        "name": "ReceiveInventory",
+        "parameters": [],
+        "rules": [],
+        "completionRules": [
+          {
+            "conditions": [
+              {
+                "type": "True"
+              }
+            ],
+            "actions": [
+              {
+                "type": "SpeechResponse",
+                "response": {
+                  "type": "Template",
+                  "templateName": "# ReceiveInventoryfea53b301b7011ea83f5997e3db07222"
                 }
+              }
             ],
-            "completionStrategy": "OnRequiredParameters",
-            "triggeringExamples": [
-                "shrinking"
-            ]
-        },
-        {
-            "name": "ReceivingMerch",
-            "parameters": [],
-            "rules": [],
-            "completionRules": [
-                {
-                    "name": "Finished receiving",
-                    "conditions": [
-                        {
-                            "type": "True"
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "type": "SpeechResponse",
-                            "response": {
-                                "type": "Template",
-                                "templateName": "# ReceivingMerchd23ebcf0fbff11e9970dcfbcb0b2c091"
-                            }
-                        }
-                    ],
-                    "nextTurnExpectations": [],
-                    "postExecutionState": "None"
-                }
-            ],
-            "completionStrategy": "OnRequiredParameters",
-            "triggeringExamples": [
-                "receiving merchandise",
-                "receiving"
-            ]
-        }
+            "name": "Fake ",
+            "nextTurnExpectations": [],
+            "postExecutionState": "None"
+          }
+        ],
+        "completionStrategy": "OnRequiredParameters",
+        "triggeringExamples": [
+          "receive"
+        ]
+      },
+      {
+        "name": "MakeInventory",
+        "parameters": [],
+        "rules": [],
+        "completionRules": [],
+        "completionStrategy": "OnRequiredParameters",
+        "triggeringExamples": [
+          "make"
+        ]
+      }
     ],
     "modelMetadata": {
-        "modelId": "ea3153a8-419f-4ce9-97d0-855017df68d1",
-        "tested": true,
-        "published": false,
-        "requiresTraining": false
+      "modelId": "0f44bf0f-640b-4e3f-af2a-c9053389434b",
+      "lastTrainedModelId": "0f44bf0f-640b-4e3f-af2a-c9053389434b",
+      "lastPublishedModelId": "0f44bf0f-640b-4e3f-af2a-c9053389434b",
+      "lastTrainedVersionId": "1.0-test",
+      "published": true,
+      "requiresTraining": false
     }
-}
+  }
