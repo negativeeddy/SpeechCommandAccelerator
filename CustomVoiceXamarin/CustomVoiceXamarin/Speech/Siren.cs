@@ -14,7 +14,7 @@ namespace CustomVoiceXamarin.Speech
 {
     class Siren
     {
-        private string SpeechApplicationId = "d451ecd4-798e-41da-bad4-94e73fa15d67";
+        private string SpeechApplicationId = "5157984f-b198-4d96-b2da-31d08edba1ee";
         private string SpeechSubscriptionKey = "b5a192fa686c46ba9ba16d5b1553769f";
         private string SpeechRegion = "westus2";
         private string KeywordModel = @"C:\src\CustomVoiceXamarin\CustomVoiceXamarin\CustomVoiceXamarin.UWP\bin\x86\Debug\AppX\voice\Hey_Kira.zip";
@@ -76,14 +76,14 @@ namespace CustomVoiceXamarin.Speech
 
                 RecognizedText = "Connecting to assistant";
 
-                DialogServiceConfig dlgSvcConfig = DialogServiceConfig.FromSpeechCommandsAppId(SpeechApplicationId, SpeechSubscriptionKey, SpeechRegion);
+                CustomCommandsConfig dlgSvcConfig = CustomCommandsConfig.FromSubscription(SpeechApplicationId, SpeechSubscriptionKey, SpeechRegion);
 
                 if (dlgSvcConfig == null)
                 {
                     Trace.WriteLine("BotConnectorConfig should not be null");
                 }
 
-                dlgSvcConfig.SpeechRecognitionLanguage = LanguageRecognition;
+                dlgSvcConfig.Language = LanguageRecognition;
 
                 AudioConfig audioConfig = AudioConfig.FromDefaultMicrophoneInput(); //run from the microphone
 
