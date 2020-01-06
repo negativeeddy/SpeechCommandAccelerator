@@ -9,7 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomVoiceXamarin.Android"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomVoiceXamarin.iOS", "CustomVoiceXamarin\CustomVoiceXamarin.iOS\CustomVoiceXamarin.iOS.csproj", "{D3F88518-4C14-4E07-A339-F7AB6F46AA26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomVoiceXamarin", "CustomVoiceXamarin\CustomVoiceXamarin\CustomVoiceXamarin.csproj", "{16A625FE-212A-4A7F-A0E1-2CF5E0169081}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomVoiceXamarin", "CustomVoiceXamarin\CustomVoiceXamarin\CustomVoiceXamarin.csproj", "{16A625FE-212A-4A7F-A0E1-2CF5E0169081}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SpeechModel", "SpeechModel", "{A526FC18-0742-48E6-BCFE-BC4BD3E9866C}"
+	ProjectSection(SolutionItems) = preProject
+		SpeechModel\dialogModel.json = SpeechModel\dialogModel.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
