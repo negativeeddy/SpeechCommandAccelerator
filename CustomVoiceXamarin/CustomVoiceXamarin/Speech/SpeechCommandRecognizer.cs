@@ -27,7 +27,22 @@ namespace CustomVoiceXamarin.Speech
 
         private ISynthesizer _synthesizer;
 
+        private bool _isListening = false;
+
+        public bool IsListening
+        {
+            get => _isListening;
+            private set { 
+                if (_isListening != value)
+                {
+                    _isListening = value;
+                    ListeningChanged?.Invoke(this, new ListeningEventArgs { IsListening = _isListening });
+                }
+            }
+        }
+
         public bool IsStarted { get; private set; }
+
         public bool UseKeyWord { get; set; }
 
         private DialogServiceConnector _dialogService = null;
@@ -127,7 +142,11 @@ namespace CustomVoiceXamarin.Speech
 
             // SessionStarted will notify when audio begins flowing to the service for a
             // turn
-            dlgSvcConnector.SessionStarted += (s, e) => Trace.WriteLine($"SPEECH SESSION STARTED event id: {e.SessionId}");
+            dlgSvcConnector.SessionStarted += (s, e) =>
+            {
+                Trace.WriteLine($"SPEECH SESSION STARTED event id: {e.SessionId}");
+                this.IsListening = true;
+            };
 
             // SessionStopped will notify when a turn is complete and it's safe to begin
             // listening again
@@ -135,6 +154,7 @@ namespace CustomVoiceXamarin.Speech
             {
                 Trace.WriteLine($"SPEECH SESSION STOPPED event id: {e.SessionId}");
                 this.IsStarted = false;
+                this.IsListening = false;
             };
 
             // Canceled will be signaled when a turn is aborted or experiences an error
@@ -143,6 +163,7 @@ namespace CustomVoiceXamarin.Speech
             {
                 Trace.WriteLine($"SPEECH CANCELLED event details: {e.ErrorDetails}");
                 this.IsStarted = false;
+                this.IsListening = false;
             };
 
             // ActivityReceived is the main way your bot will communicate with the client
@@ -166,7 +187,12 @@ namespace CustomVoiceXamarin.Speech
                     if (activity.InputHint == InputHints.ExpectingInput)
                     {
                         await _dialogService.ListenOnceAsync();
+                        IsStarted = true;
 
+                    }
+                    else
+                    {
+                        IsStarted = false;
                     }
                 }
                 catch (Exception e)
@@ -174,8 +200,6 @@ namespace CustomVoiceXamarin.Speech
                     Trace.WriteLine("JSON handling issue " + e.Message);
 
                 }
-
-                IsStarted = false;
 
                 Trace.WriteLine("Received activity: {} " + activityJson);
             };
@@ -208,10 +232,16 @@ namespace CustomVoiceXamarin.Speech
         public event EventHandler<SirenEventArgs> RecognitionUpdate;
         public event EventHandler<SirenEventArgs> ResponseUpdated;
         public event EventHandler<SirenEventArgs> RecognizedUpdate;
+        public event EventHandler<ListeningEventArgs> ListeningChanged;
 
         public class SirenEventArgs : EventArgs
         {
             public string Text { get; set; }
+        }
+
+        public class ListeningEventArgs : EventArgs
+        {
+            public bool IsListening { get; set; }
         }
     }
 }

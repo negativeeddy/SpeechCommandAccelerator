@@ -6,10 +6,14 @@
              mc:Ignorable="d"
              x:Class="CustomVoiceXamarin.BadgePage">
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout Padding="15">
             <Label x:Name="statusText" Text="Badge page!!"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
+            <StackLayout Orientation="Horizontal">
+                <Label VerticalTextAlignment="Center">Is listening</Label>
+                <CheckBox x:Name="cbIsListening" IsEnabled="False" Color="Red" VerticalOptions="Center" />
+            </StackLayout>
             <Button x:Name="bttnStartListening" Text="Speak" Clicked="bttnStartListening_Clicked"></Button>
             <CollectionView x:Name="messagesView" ItemTemplate="{StaticResource chatTemplate}">
             </CollectionView>

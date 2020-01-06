@@ -36,10 +36,15 @@ namespace CustomVoiceXamarin
             _siren.RecognitionUpdate += (s, e) => setText(e.Text);
             _siren.ResponseUpdated += (s, e) => AddBotText(e.Text);
             _siren.RecognizedUpdate += (s, e) => AddUserText(e.Text);
-
+            _siren.ListeningChanged += (s, e) => UpdateListening(e.IsListening);
 
             await _siren.InitializeAsync(); // initialize the speech channel bot connection
             _siren.UseKeyWord = false;
+        }
+
+        private void UpdateListening(bool isListening)
+        {
+            UpdateUI(() => cbIsListening.IsChecked = isListening);
         }
 
         private void UpdateUI(Action action)
