@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.CognitiveServices.Inventory.Speech;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 
-namespace CustomVoiceXamarin
+namespace Microsoft.CognitiveServices.Inventory
 {
 
     public class ChatTemplateSelector : DataTemplateSelector

@@ -2,7 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace CustomVoiceXamarin
+namespace Microsoft.CognitiveServices.Inventory
 {
     public partial class App : Application
     {

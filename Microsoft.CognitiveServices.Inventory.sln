@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomVoiceXamarin.UWP", "CustomVoiceXamarin\CustomVoiceXamarin.UWP\CustomVoiceXamarin.UWP.csproj", "{30C5D3BA-48B7-4C6B-96D5-171F39DDE0F5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.CognitiveServices.Inventory.UWP", "CustomVoiceXamarin\CustomVoiceXamarin.UWP\Microsoft.CognitiveServices.Inventory.UWP.csproj", "{30C5D3BA-48B7-4C6B-96D5-171F39DDE0F5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomVoiceXamarin", "CustomVoiceXamarin\CustomVoiceXamarin\CustomVoiceXamarin.csproj", "{16A625FE-212A-4A7F-A0E1-2CF5E0169081}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CognitiveServices.Inventory", "CustomVoiceXamarin\CustomVoiceXamarin\Microsoft.CognitiveServices.Inventory.csproj", "{16A625FE-212A-4A7F-A0E1-2CF5E0169081}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

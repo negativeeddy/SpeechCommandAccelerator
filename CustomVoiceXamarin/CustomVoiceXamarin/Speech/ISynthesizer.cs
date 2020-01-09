@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.CognitiveServices.Speech.Audio;
 
-namespace CustomVoiceXamarin.Speech
+namespace Microsoft.CognitiveServices.Inventory.Speech
 {
     /// <summary>
     /// The ISynthesier interface plays the audio streams from the Speech SDK

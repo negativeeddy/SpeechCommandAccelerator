@@ -4,14 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
-namespace CustomVoiceXamarin
+namespace Microsoft.CognitiveServices.Inventory
 {
     public class AppSettings
     {
         private static AppSettings _instance;
         private JObject _settingsJson;
 
-        private const string Namespace = nameof(CustomVoiceXamarin);
+        private const string Namespace = "Microsoft.CognitiveServices.Inventory";
         private const string FileName = "appSettings.json";
 
         private AppSettings()

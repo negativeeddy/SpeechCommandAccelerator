@@ -22,7 +22,7 @@ namespace CustomVoiceXamarin.UWP
         {
             this.InitializeComponent();
 
-            LoadApplication(new CustomVoiceXamarin.App());
+            LoadApplication(new Microsoft.CognitiveServices.Inventory.App());
         }
     }
 }

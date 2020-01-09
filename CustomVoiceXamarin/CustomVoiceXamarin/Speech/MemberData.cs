@@ -1,7 +1,7 @@
 ﻿using System.Xml.Linq;
 using Xamarin.Forms;
 
-namespace CustomVoiceXamarin
+namespace Microsoft.CognitiveServices.Inventory
 {
     public class MemberData
     {

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace CustomVoiceXamarin.Speech
+namespace Microsoft.CognitiveServices.Inventory.Speech
 {
     public partial class SpeechCommandRecognizer
     {
@@ -64,7 +64,7 @@ namespace CustomVoiceXamarin.Speech
                 Trace.WriteLine("Starting listen once session.");
                 await _dialogService.ListenOnceAsync();
                 // Start listening.
-                StatusText = "listening once ...";
+                IsListening = true;
             }
             catch (Exception e)
             {
@@ -100,8 +100,8 @@ namespace CustomVoiceXamarin.Speech
 
                 // Connect to the bot
                 await _dialogService.ConnectAsync();
+                StatusText = "connected";
                 Trace.WriteLine("SpeechBotConnector is successfully connected");
-
             }
             catch (Exception ex)
             {

@@ -4,12 +4,15 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="CustomVoiceXamarin.BadgePage">
+             x:Class="Microsoft.CognitiveServices.Inventory.BadgePage">
     <ContentPage.Content>
         <StackLayout Padding="15">
-            <Label x:Name="statusText" Text="Badge page!!"
+            <StackLayout Orientation="Horizontal">
+                <Label VerticalTextAlignment="Center">Status:</Label>
+                <Label x:Name="statusText" Text=""
                 VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+                HorizontalOptions="StartAndExpand" />
+            </StackLayout>
             <StackLayout Orientation="Horizontal">
                 <Label VerticalTextAlignment="Center">Is listening</Label>
                 <CheckBox x:Name="cbIsListening" IsEnabled="False" Color="Red" VerticalOptions="Center" />

@@ -1,4 +1,4 @@
-﻿using CustomVoiceXamarin.Speech;
+﻿using Microsoft.CognitiveServices.Inventory.Speech;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +9,7 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace CustomVoiceXamarin
+namespace Microsoft.CognitiveServices.Inventory
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class BadgePage : ContentPage

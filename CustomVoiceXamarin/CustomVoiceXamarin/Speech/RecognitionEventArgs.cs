@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CustomVoiceXamarin.Speech
+namespace Microsoft.CognitiveServices.Inventory.Speech
 {
     public partial class SpeechCommandRecognizer
     {

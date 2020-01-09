@@ -1,4 +1,5 @@
-﻿using CustomVoiceXamarin.Speech;
+﻿using CustomVoiceXamarin.UWP;
+using Microsoft.CognitiveServices.Inventory.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using System;
 using System.Collections.Concurrent;
@@ -12,8 +13,8 @@ using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Xamarin.Forms;
 
-[assembly: Dependency(typeof(CustomVoiceXamarin.UWP.UwpSynthesizer))]
-namespace CustomVoiceXamarin.UWP
+[assembly: Dependency(typeof(Microsoft.CognitiveServices.Inventory.UWP.UwpSynthesizer))]
+namespace Microsoft.CognitiveServices.Inventory.UWP
 {
     public sealed class UwpSynthesizer : ISynthesizer
     {
