@@ -151,7 +151,7 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CustomVoiceXamarin\Microsoft.CognitiveServices.Inventory.csproj">
+    <ProjectReference Include="..\Microsoft.CognitiveServices.Inventory\Microsoft.CognitiveServices.Inventory.csproj">
       <Project>{16A625FE-212A-4A7F-A0E1-2CF5E0169081}</Project>
       <Name>Microsoft.CognitiveServices.Inventory</Name>
     </ProjectReference>
