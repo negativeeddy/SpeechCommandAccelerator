@@ -15,7 +15,7 @@
                 <CheckBox x:Name="cbIsListening" IsEnabled="False" Color="Red" VerticalOptions="Center" />
             </StackLayout>
             <Button x:Name="bttnStartListening" Text="Speak" Clicked="bttnStartListening_Clicked"></Button>
-            <CollectionView x:Name="messagesView" ItemTemplate="{StaticResource chatTemplate}">
+            <CollectionView x:Name="messagesView" ItemTemplate="{StaticResource chatTemplate}" ItemsSource="{Binding _messages}">
             </CollectionView>
         </StackLayout>
     </ContentPage.Content>

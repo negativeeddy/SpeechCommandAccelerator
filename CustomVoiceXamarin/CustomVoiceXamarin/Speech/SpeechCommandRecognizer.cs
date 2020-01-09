@@ -20,7 +20,7 @@ namespace CustomVoiceXamarin.Speech
 
         private string LanguageRecognition = "en-us";
 
-        private string _recognizedText;
+        private string _statusText;
 
         private ISynthesizer _synthesizer;
 
@@ -64,7 +64,7 @@ namespace CustomVoiceXamarin.Speech
                 Trace.WriteLine("Starting listen once session.");
                 await _dialogService.ListenOnceAsync();
                 // Start listening.
-                RecognizedText = "listening once ...";
+                StatusText = "listening once ...";
             }
             catch (Exception e)
             {
@@ -78,7 +78,7 @@ namespace CustomVoiceXamarin.Speech
             {
                 await _synthesizer.InitializeAsync();
 
-                RecognizedText = "Connecting to assistant";
+                StatusText = "Connecting to assistant";
 
                 string speechApplicationId = AppSettings.Settings.GetValue("speechApplicationId");
                 string speechSubscriptionKey = AppSettings.Settings.GetValue("speechSubscriptionKey");
@@ -114,7 +114,7 @@ namespace CustomVoiceXamarin.Speech
         {
             // Recognizing will notify as the recognition happens displaying the 
             // currently recognized text
-            dlgSvcConnector.Recognizing += (o, e) => RecognizedText = e.Result.Text;
+            dlgSvcConnector.Recognizing += (o, e) => StatusText = e.Result.Text;
 
             // Recognized will notify when a recognition is complete displaying the 
             // final recognized text
@@ -122,11 +122,12 @@ namespace CustomVoiceXamarin.Speech
             {
                 if (e.Result.Reason == ResultReason.RecognizedKeyword)
                 {
-                    RecognizedText = "listening...";
+                    ListeningChanged?.Invoke(this, new ListeningEventArgs { IsListening = true });
+                    StatusText = "listening...";
                 }
                 else
                 {
-                    RecognizedText = e.Result.Text;
+                    RecognizedUpdate?.Invoke(this, new RecognitionEventArgs { Text = e.Result.Text });
                 }
             };
 
@@ -152,7 +153,7 @@ namespace CustomVoiceXamarin.Speech
             dlgSvcConnector.Canceled += (s, e) =>
             {
                 Trace.WriteLine($"SPEECH CANCELLED event details: {e.ErrorDetails}");
-                RecognizedText = e.ErrorDetails;
+                StatusText = e.ErrorDetails;
                 this.IsStarted = false;
                 this.IsListening = false;
             };
@@ -172,20 +173,21 @@ namespace CustomVoiceXamarin.Speech
                 try
                 {
                     var activity = JsonConvert.DeserializeObject<Activity>(activityJson);
-
-                    // use the spoken text if available, otherwise the normal text
-                    ResultsText = activity.Speak ?? activity.Text;
-
-                    if (activity.InputHint == InputHints.ExpectingInput)
+                    if (activity.Type == ActivityTypes.Message)
                     {
-                        // restart the listening since the command has indicated it is
-                        // waiting for a reply to this activity
-                        await _dialogService.ListenOnceAsync();
-                        IsStarted = true;
-                    }
-                    else
-                    {
-                        IsStarted = false;
+                        ResultsText = activity.Text;
+
+                        if (activity.InputHint == InputHints.ExpectingInput)
+                        {
+                            // restart the listening since the command has indicated it is
+                            // waiting for a reply to this activity
+                            await _dialogService.ListenOnceAsync();
+                            IsStarted = true;
+                        }
+                        else
+                        {
+                            IsStarted = false;
+                        }
                     }
                 }
                 catch (Exception e)
@@ -198,15 +200,15 @@ namespace CustomVoiceXamarin.Speech
             };
         }
 
-        public string RecognizedText
+        public string StatusText
         {
             set
             {
-                _recognizedText = " " + value;
-                Trace.WriteLine(_recognizedText);
+                _statusText = " " + value;
+                Trace.WriteLine(_statusText);
                 RecognitionUpdate?.Invoke(this, new RecognitionEventArgs() { Text = value });
             }
-            get => _recognizedText;
+            get => _statusText;
         }
 
         private string _resultsText;
@@ -217,9 +219,9 @@ namespace CustomVoiceXamarin.Speech
             {
                 _resultsText = value;
                 Trace.WriteLine(_resultsText);
-                //ResponseUpdated?.Invoke(this, new SirenEventArgs() { Text = value });
+                ResponseUpdated?.Invoke(this, new RecognitionEventArgs() { Text = value });
             }
-            get => _recognizedText;
+            get => _resultsText;
         }
 
         public event EventHandler<RecognitionEventArgs> RecognitionUpdate;
