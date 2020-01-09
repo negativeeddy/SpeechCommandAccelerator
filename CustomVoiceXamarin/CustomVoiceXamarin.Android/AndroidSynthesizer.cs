@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Android;
+using Android.App;
 using Android.Media;
+using Android.OS;
+using Android.Support.Design.Widget;
+using Android.Support.V4.App;
 using CustomVoiceXamarin.Speech;
 using Java.IO;
 using Microsoft.CognitiveServices.Speech.Audio;
@@ -38,6 +43,7 @@ namespace CustomVoiceXamarin.Droid
         }
 
         private object _startPlayingLock = new object();
+        private bool _micAccessGranted;
 
         // TODO: switch to BlockingCollection<T> for producer/consumer pattern
         private void EnsureIsPlaying()
@@ -150,10 +156,49 @@ namespace CustomVoiceXamarin.Droid
             return null;
         }
 
-        public Task InitializeAsync()
+        public async Task InitializeAsync()
         {
-            // nothing to do here
-            return Task.CompletedTask;
+            await EnsureMicIsEnabled();
         }
+
+        private async Task EnsureMicIsEnabled()
+        {
+            // Permissions are required only for Marshmallow and up
+            if ((int)Build.VERSION.SdkInt < 23)
+            {
+                return;
+            }
+            else
+            {
+                var currentActivity = MainActivity.Instance;
+                if ((ActivityCompat.CheckSelfPermission(currentActivity, Manifest.Permission.RecordAudio) != (int)Android.Content.PM.Permission.Granted) ||
+                    ActivityCompat.CheckSelfPermission(currentActivity, Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
+                {
+                    RequestMicPermission();
+                }
+            }
+        }
+
+
+        public const int REQUEST_MIC = 1;
+        private string[] permissions = { Manifest.Permission.RecordAudio, Manifest.Permission.ReadExternalStorage };
+
+        private void RequestMicPermission()
+        {
+            var currentActivity = MainActivity.Instance;
+            if (ActivityCompat.ShouldShowRequestPermissionRationale(currentActivity, Manifest.Permission.RecordAudio))
+            {
+                Snackbar.Make(currentActivity.FindViewById((Android.Resource.Id.Content)), "App requires microphone permission.", Snackbar.LengthIndefinite).SetAction("Ok", v =>
+                {
+                    ((Activity)currentActivity).RequestPermissions(permissions, REQUEST_MIC);
+
+                }).Show();
+            }
+            else
+            {
+                ActivityCompat.RequestPermissions(((Activity)currentActivity), permissions, REQUEST_MIC);
+            }
+        }
+
     }
 }

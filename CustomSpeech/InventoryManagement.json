@@ -1,14 +1,14 @@
 {
     "type": "CommandsDialogModel",
     "culture": "en-us",
-    "recognizer": {
-      "application": "b84da5d0-1c96-40da-bb14-3753b8488ddf",
-      "isStaging": false,
-      "versionId": "1.0",
-      "endpointKey": "74697a3d749c486ea0559e4eabc055c7",
-      "region": "westus",
-      "type": "luis"
-    },
+  "recognizer": {
+    "application": "",
+    "isStaging": false,
+    "versionId": "1.0",
+    "endpointKey": "",
+    "region": "westus",
+    "type": "luis"
+  },
     "httpEndpoints": [
       {
         "name": "InventoryManagementAPI",
@@ -660,10 +660,10 @@
       }
     ],
     "modelMetadata": {
-      "modelId": "99645ee5-f6f0-432a-a12d-84ff50fea404",
-      "lastTrainedModelId": "f0efd69b-4933-4ea1-804c-d0a43e6de3a7",
-      "lastPublishedModelId": "0f44bf0f-640b-4e3f-af2a-c9053389434b",
-      "lastTrainedVersionId": "1.0-test",
+      "modelId": "",
+      "lastTrainedModelId": "",
+      "lastPublishedModelId": "",
+      "lastTrainedVersionId": "",
       "published": false,
       "requiresTraining": false
     }

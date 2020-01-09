@@ -54,7 +54,6 @@ namespace CustomVoiceXamarin
 
 
             await _siren.InitializeAsync(); // initialize the speech channel bot connection
-            _siren.UseKeyWord = true;
 
             await _siren.StartAsync();
         }

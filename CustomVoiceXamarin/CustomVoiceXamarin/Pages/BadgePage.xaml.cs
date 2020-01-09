@@ -39,7 +39,6 @@ namespace CustomVoiceXamarin
             _siren.ListeningChanged += (s, e) => UpdateListening(e.IsListening);
 
             await _siren.InitializeAsync(); // initialize the speech channel bot connection
-            _siren.UseKeyWord = false;
         }
 
         private void UpdateListening(bool isListening)

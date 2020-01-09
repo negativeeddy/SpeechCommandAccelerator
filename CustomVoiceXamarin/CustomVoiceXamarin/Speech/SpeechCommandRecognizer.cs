@@ -16,10 +16,9 @@ namespace CustomVoiceXamarin.Speech
 {
     public class SpeechCommandRecognizer
     {
-        private string SpeechApplicationId = "5157984f-b198-4d96-b2da-31d08edba1ee";
-        private string SpeechSubscriptionKey = "b5a192fa686c46ba9ba16d5b1553769f";
+        private string SpeechApplicationId = "<< YOUR APP ID HERE >>";
+        private string SpeechSubscriptionKey = "<< YOUR SPEECH KEY HERE >>";
         private string SpeechRegion = "westus2";
-        private string KeywordModel = @"C:\src\CustomVoiceXamarin\CustomVoiceXamarin\CustomVoiceXamarin.UWP\bin\x86\Debug\AppX\voice\Hey_Kira.zip";
 
         private string LanguageRecognition = "en-us";
 
@@ -32,7 +31,8 @@ namespace CustomVoiceXamarin.Speech
         public bool IsListening
         {
             get => _isListening;
-            private set { 
+            private set
+            {
                 if (_isListening != value)
                 {
                     _isListening = value;
@@ -42,8 +42,6 @@ namespace CustomVoiceXamarin.Speech
         }
 
         public bool IsStarted { get; private set; }
-
-        public bool UseKeyWord { get; set; }
 
         private DialogServiceConnector _dialogService = null;
 
@@ -65,18 +63,10 @@ namespace CustomVoiceXamarin.Speech
 
             try
             {
-                if (UseKeyWord)
-                {
-                    var model = KeywordRecognitionModel.FromFile(KeywordModel);   // TODO: will this work?
-                    await _dialogService.StartKeywordRecognitionAsync(model);
-                }
-                else
-                {
-                    Trace.WriteLine("Starting listen once session.");
-                    await _dialogService.ListenOnceAsync();
-                    // Start listening.
-                    RecognizedText = "listening once ...";
-                }
+                Trace.WriteLine("Starting listen once session.");
+                await _dialogService.ListenOnceAsync();
+                // Start listening.
+                RecognizedText = "listening once ...";
             }
             catch (Exception e)
             {
@@ -153,6 +143,7 @@ namespace CustomVoiceXamarin.Speech
             dlgSvcConnector.SessionStopped += (s, e) =>
             {
                 Trace.WriteLine($"SPEECH SESSION STOPPED event id: {e.SessionId}");
+                RecognizedText = "<session ended>";
                 this.IsStarted = false;
                 this.IsListening = false;
             };
@@ -162,6 +153,7 @@ namespace CustomVoiceXamarin.Speech
             dlgSvcConnector.Canceled += (s, e) =>
             {
                 Trace.WriteLine($"SPEECH CANCELLED event details: {e.ErrorDetails}");
+                RecognizedText = e.ErrorDetails;
                 this.IsStarted = false;
                 this.IsListening = false;
             };
