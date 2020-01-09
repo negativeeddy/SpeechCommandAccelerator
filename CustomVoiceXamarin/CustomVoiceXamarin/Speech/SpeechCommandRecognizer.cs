@@ -14,7 +14,7 @@ using Xamarin.Forms;
 
 namespace CustomVoiceXamarin.Speech
 {
-    public class SpeechCommandRecognizer
+    public partial class SpeechCommandRecognizer
     {
         private string SpeechRegion = "westus2";
 
@@ -112,12 +112,12 @@ namespace CustomVoiceXamarin.Speech
 
         private void RegisterEventListeners(DialogServiceConnector dlgSvcConnector)
         {
-            // SessionStarted will notify when audio begins flowing to the service for a
-            // turn
+            // Recognizing will notify as the recognition happens displaying the 
+            // currently recognized text
             dlgSvcConnector.Recognizing += (o, e) => RecognizedText = e.Result.Text;
 
-            // SessionStopped will notify when a turn is complete and it's safe to begin
-            // listening again
+            // Recognized will notify when a recognition is complete displaying the 
+            // final recognized text
             dlgSvcConnector.Recognized += (o, e) =>
             {
                 if (e.Result.Reason == ResultReason.RecognizedKeyword)
@@ -143,7 +143,6 @@ namespace CustomVoiceXamarin.Speech
             dlgSvcConnector.SessionStopped += (s, e) =>
             {
                 Trace.WriteLine($"SPEECH SESSION STOPPED event id: {e.SessionId}");
-                RecognizedText = "<session ended>";
                 this.IsStarted = false;
                 this.IsListening = false;
             };
@@ -174,13 +173,15 @@ namespace CustomVoiceXamarin.Speech
                 {
                     var activity = JsonConvert.DeserializeObject<Activity>(activityJson);
 
-                    ResultsText = activity.Speak ?? activity.Text; // TODO: extract the right info here base on the above comment
+                    // use the spoken text if available, otherwise the normal text
+                    ResultsText = activity.Speak ?? activity.Text;
 
                     if (activity.InputHint == InputHints.ExpectingInput)
                     {
+                        // restart the listening since the command has indicated it is
+                        // waiting for a reply to this activity
                         await _dialogService.ListenOnceAsync();
                         IsStarted = true;
-
                     }
                     else
                     {
@@ -193,7 +194,7 @@ namespace CustomVoiceXamarin.Speech
 
                 }
 
-                Trace.WriteLine("Received activity: {} " + activityJson);
+                Trace.WriteLine($"Received activity: {activityJson}");
             };
         }
 
@@ -203,7 +204,7 @@ namespace CustomVoiceXamarin.Speech
             {
                 _recognizedText = " " + value;
                 Trace.WriteLine(_recognizedText);
-                RecognitionUpdate?.Invoke(this, new SirenEventArgs() { Text = value });
+                RecognitionUpdate?.Invoke(this, new RecognitionEventArgs() { Text = value });
             }
             get => _recognizedText;
         }
@@ -221,19 +222,9 @@ namespace CustomVoiceXamarin.Speech
             get => _recognizedText;
         }
 
-        public event EventHandler<SirenEventArgs> RecognitionUpdate;
-        public event EventHandler<SirenEventArgs> ResponseUpdated;
-        public event EventHandler<SirenEventArgs> RecognizedUpdate;
+        public event EventHandler<RecognitionEventArgs> RecognitionUpdate;
+        public event EventHandler<RecognitionEventArgs> ResponseUpdated;
+        public event EventHandler<RecognitionEventArgs> RecognizedUpdate;
         public event EventHandler<ListeningEventArgs> ListeningChanged;
-
-        public class SirenEventArgs : EventArgs
-        {
-            public string Text { get; set; }
-        }
-
-        public class ListeningEventArgs : EventArgs
-        {
-            public bool IsListening { get; set; }
-        }
     }
 }
