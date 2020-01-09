@@ -10,7 +10,7 @@ namespace CustomVoiceXamarin
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new ModeSelectionPage());
+            MainPage = new NavigationPage(new BadgePage());
         }
 
         protected override void OnStart()
