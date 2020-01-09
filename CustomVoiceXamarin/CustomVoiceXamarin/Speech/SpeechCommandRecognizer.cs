@@ -16,8 +16,6 @@ namespace CustomVoiceXamarin.Speech
 {
     public class SpeechCommandRecognizer
     {
-        private string SpeechApplicationId = "<< YOUR APP ID HERE >>";
-        private string SpeechSubscriptionKey = "<< YOUR SPEECH KEY HERE >>";
         private string SpeechRegion = "westus2";
 
         private string LanguageRecognition = "en-us";
@@ -82,7 +80,9 @@ namespace CustomVoiceXamarin.Speech
 
                 RecognizedText = "Connecting to assistant";
 
-                CustomCommandsConfig commandConfig = CustomCommandsConfig.FromSubscription(SpeechApplicationId, SpeechSubscriptionKey, SpeechRegion);
+                string speechApplicationId = AppSettings.Settings.GetValue("speechApplicationId");
+                string speechSubscriptionKey = AppSettings.Settings.GetValue("speechSubscriptionKey");
+                CustomCommandsConfig commandConfig = CustomCommandsConfig.FromSubscription(speechApplicationId, speechSubscriptionKey, SpeechRegion);
 
                 if (commandConfig == null)
                 {
