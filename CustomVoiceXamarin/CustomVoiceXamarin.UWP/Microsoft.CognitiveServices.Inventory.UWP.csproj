@@ -7,8 +7,8 @@
     <ProjectGuid>{30C5D3BA-48B7-4C6B-96D5-171F39DDE0F5}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CustomVoiceXamarin.UWP</RootNamespace>
-    <AssemblyName>CustomVoiceXamarin.UWP</AssemblyName>
+    <RootNamespace>Microsoft.CognitiveServices.Inventory.UWP</RootNamespace>
+    <AssemblyName>Microsoft.CognitiveServices.Inventory.UWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.17763.0</TargetPlatformVersion>

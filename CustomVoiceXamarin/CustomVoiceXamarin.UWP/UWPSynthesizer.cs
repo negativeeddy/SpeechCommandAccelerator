@@ -1,5 +1,4 @@
-﻿using CustomVoiceXamarin.UWP;
-using Microsoft.CognitiveServices.Inventory.Speech;
+﻿using Microsoft.CognitiveServices.Inventory.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using System;
 using System.Collections.Concurrent;

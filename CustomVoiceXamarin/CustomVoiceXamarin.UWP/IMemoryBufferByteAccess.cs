@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace CustomVoiceXamarin.UWP
+namespace Microsoft.CognitiveServices.Inventory.UWP
 {
     // We are initializing a COM interface for use within the namespace
     // This interface allows access to memory at the byte level which we need to populate audio data that is generated

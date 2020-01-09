@@ -14,13 +14,13 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace CustomVoiceXamarin.UWP
+namespace Microsoft.CognitiveServices.Inventory.UWP
 {
     public sealed partial class MainPage
     {
         public MainPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             LoadApplication(new Microsoft.CognitiveServices.Inventory.App());
         }
