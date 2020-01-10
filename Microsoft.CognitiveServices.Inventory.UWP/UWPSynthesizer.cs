@@ -3,13 +3,11 @@ using Microsoft.CognitiveServices.Speech.Audio;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Media;
 using Windows.Media.Audio;
 using Windows.Media.MediaProperties;
-using Windows.Storage;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(Microsoft.CognitiveServices.Inventory.UWP.UwpSynthesizer))]
