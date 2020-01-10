@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:Microsoft.CognitiveServices.Inventory"
+             mc:Ignorable="d"
+             x:Class="Microsoft.CognitiveServices.Inventory.App">
+    <Application.Resources>
+        <local:ChatTemplateSelector x:Key="chatTemplate">
+            <local:ChatTemplateSelector.UserTemplate>
+                <DataTemplate>
+                    <Grid Padding="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Text="{Binding Text}"/>
+                        <Label TextColor="{Binding MemberData.Color}" Text="{Binding MemberData.Name}" Grid.Row="1"/>
+                    </Grid>
+                </DataTemplate>
+            </local:ChatTemplateSelector.UserTemplate>
+            <local:ChatTemplateSelector.BotTemplate>
+                <DataTemplate>
+                    <Grid Padding="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Text="{Binding Text}" HorizontalTextAlignment="End"/>
+                        <Label TextColor="{Binding MemberData.Color}" Text="{Binding MemberData.Name}" Grid.Row="1" HorizontalTextAlignment="End"/>
+                    </Grid>
+                </DataTemplate>
+            </local:ChatTemplateSelector.BotTemplate>
+        </local:ChatTemplateSelector>
+
+    </Application.Resources>
+</Application>

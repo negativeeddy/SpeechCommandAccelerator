@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Microsoft.CognitiveServices.Inventory.BadgePage">
+    <ContentPage.Content>
+        <StackLayout Padding="15">
+            <StackLayout Orientation="Horizontal">
+                <Label VerticalTextAlignment="Center">Status:</Label>
+                <Label x:Name="statusText" Text=""
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="StartAndExpand" />
+            </StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <Label VerticalTextAlignment="Center">Is listening</Label>
+                <CheckBox x:Name="cbIsListening" IsEnabled="False" Color="Red" VerticalOptions="Center" />
+            </StackLayout>
+            <Button x:Name="bttnStartListening" Text="Speak" Clicked="bttnStartListening_Clicked"></Button>
+            <CollectionView x:Name="messagesView" ItemTemplate="{StaticResource chatTemplate}" ItemsSource="{Binding _messages}">
+            </CollectionView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
